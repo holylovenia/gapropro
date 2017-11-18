@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<endpoints xmlns='http://java.sun.com/xml/ns/jax-ws/ri/runtime' version='2.0'>
+
+    <endpoint
+            name='Transaction'
+            implementation='com.shampoo.service.ojek.responder.TransactionImpl'
+            url-pattern='/services/Transaction'/>
+
+    <endpoint
+            name='PreferredLocation'
+            implementation='com.shampoo.service.ojek.responder.PreferredLocationImpl'
+            url-pattern='/services/PreferredLocation'/>
+
+    <endpoint
+            name='UserManagement'
+            implementation='com.shampoo.service.ojek.responder.UserManagementImpl'
+            url-pattern='/services/UserManagement'/>
+
+    <endpoint
+            name='Order'
+            implementation='com.shampoo.service.ojek.responder.OrderImpl'
+            url-pattern='/services/Order'/>
+
+</endpoints>
