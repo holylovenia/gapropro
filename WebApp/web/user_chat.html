@@ -41,10 +41,10 @@
             </a>
         </div>
     </div>
-    <div class="order-body">
-        <h1 class="order-header">
+    <div class="order-body" ng-app="userChat">
+        <h2 class="order-header">
             MAKE AN ORDER
-        </h1>
+        </h2>
         <div class="order-nav-bar">
             <div class="order-section order-section-1 order-section-active">
                 <div class="order-section-circle">
@@ -84,7 +84,7 @@
 
         </div>
         <div class="order-form">
-           <div class="chat-box">
+           <div class="chat-box" ng-controller="chatController">
                <div class="chat-message">
                     <div class="message-wrapper from-sender"><div class="message">Hello!</div></div>
                     <div class="message-wrapper to-sender"><div class="message">Hi!</div></div>
@@ -94,8 +94,8 @@
                     <div class="message-wrapper to-sender"><div class="message">Hi!</div></div>
                     <div class="message-wrapper to-sender"><div class="message">Hi!</div></div>
                     <div class="message-wrapper to-sender"><div class="message">Hi!</div></div>
-                    <div class="message-wrapper to-sender"><div class="message">Hi!</div></div>
-                    <div class="message-wrapper from-sender"><div class="message">aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</div></div>
+                    <div class="message-wrapper to-sender"><div class="message">Hih read doang</div></div>
+                    <div class="message-wrapper from-sender"><div class="message">Halo!</div></div>
 
                </div>
                <div class="chat-input">
@@ -107,5 +107,15 @@
     </div>
 
 </div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+<script>
+    var app = angular.module("userChat", []);
+    app.controller("chat-controller", function($scope){
+        
+    });
+
+</script>
 </body>
 </html>

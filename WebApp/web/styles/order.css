@@ -96,8 +96,8 @@ a.logout {
 .order-header {
     margin-top: 6px;
     margin-bottom: 15px;
-    font-size: 3em;
-    font-family: "Times new Roman";
+    font-size: 2.2em;
+    font-family: "Roboto";
 }
 
 .order-nav-bar {
@@ -419,7 +419,7 @@ input {
 
     font-size:0.7rem;
     line-height: 1.1rem;
-    letter-spacing: 0.03rem;
+    letter-spacing: 0.01rem;
     word-break: break-all;
 }
 
@@ -458,12 +458,50 @@ input {
     border:none;
 }
 
-.chat-input-button:hover{
+.chat-input-button:hover {
     background-color:#364059;
     transition-duration:0.2s;
 }
 
-.chat-input-button::after{
+.chat-input-button::after {
     content : "";
     clear: both;
+}
+
+/* Driver Chat */
+.order-status {
+    text-align:center;
+    font-family:Arial;
+    margin-top:8rem;
+}
+
+
+.order-status button {
+    border:1px solid #000000;
+    border-radius:4px;
+    padding:12px 20px;
+
+    font-size:1.2rem;
+    font-family:'Times New Roman', Times, serif;   
+}
+
+.find-order{
+    background-color: #30e230;
+    color:#FFFFFF;
+}
+
+.cancel {
+    background-color: #FF0000;
+    color: #FFFFFF
+}
+
+.status {
+    font-weight:bold;
+    font-size:2rem;
+}
+
+
+
+.chat-username {
+
 }
