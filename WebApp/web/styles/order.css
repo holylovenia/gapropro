@@ -1,6 +1,13 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto');
+
 .container {
     margin: 0 auto;
     width: 600px;
+}
+
+.container-wide {
+    margin: 0 auto;
+    width: 700px;
 }
 
 .nav-top {
@@ -96,26 +103,15 @@ a.logout {
 .order-nav-bar {
     display: flex;
     width: 100%;
+    justify-content: space-between;
 }
 
 .order-section {
     display: flex;
     flex-direction: row;
-    width: 30%;
     border: 1px solid black;
-    padding: 5px;
-}
-
-.order-section-1 {
-    margin: 0 3% 20px 0px;
-}
-
-.order-section-2 {
-    margin: 0 3% 20px 3%;
-}
-
-.order-section-3 {
-    margin: 0 0px 20px 3%;
+    padding: 3px;
+    justify-content: space-evenly;
 }
 
 .order-section-active {
@@ -148,9 +144,8 @@ a.logout {
 }
 
 .order-form {
-    width: 100%;
-    margin-left: 25px;
-    margin-right: 0px;
+    width: 90%;
+    margin: 0 auto;
 }
 
 .order-input-type {
@@ -164,11 +159,16 @@ a.logout {
     font-family: arial, serif;
 }
 
+input {
+    font-size: 1.3rem;
+    height: 2rem;
+    padding: 1px 2px;
+    box-sizing: border-box;
+}
+
 .order-answer {
     float: right;
-    font-size: 1.3em;
     margin-left: 5px;
-    height: 35px;
     width: 350px;
     margin-top: 5px;
     margin-right: 40px;
@@ -376,4 +376,94 @@ a.logout {
     background: #82D800;
     border-radius: 10px;
     cursor: pointer;
+}
+
+/*
+    Chat Box
+*/
+
+.chat-box {
+    width:100%;
+    margin: 0 auto;
+    margin-top:2rem;
+    font-family:Tahoma, sans-serif;
+}
+
+.chat-message {
+    border:1px solid #999999;
+    border-bottom:none;
+    height:20rem;
+    padding:6px;
+    overflow-y:auto;
+    overflow-x: hidden;
+    
+    background-color: #FFFFFF;
+    /* background-color: #7393C2; For Line Mobile theme */
+}
+
+/* Chat Message  */
+
+.message-wrapper {
+    width:100%;
+    display:flex;
+    padding: 0.1rem 0.5rem;
+    box-sizing:border-box;
+}
+
+.message {
+    padding: 0.35rem 0.8rem;
+    border-radius:20px;
+    box-sizing:border-box;
+    width: fit-content;
+    max-width: 88%;
+
+    font-size:0.7rem;
+    line-height: 1.1rem;
+    letter-spacing: 0.03rem;
+    word-break: break-all;
+}
+
+.from-sender{
+    justify-content: flex-end;
+}
+
+.from-sender > .message{
+    background-color: #bef18c;
+}
+
+.to-sender > .message{
+    background-color: #DDDDDD;
+    /* background-color: #FFFFFF; For Line Mobile theme */
+}
+
+/* Chat Input */
+
+.chat-input {
+    display:flex;
+    width:100%;
+}
+
+.chat-input-message {
+    flex:9;
+    width:100%;
+    box-sizing:border-box;
+    font-size: 0.9rem;
+}
+
+.chat-input-button {
+    flex:1;
+    background-color:#263049;
+    color:#FFFFFF;
+    font-weight:bold;
+    border:none;
+}
+
+.chat-input-button:hover{
+    background-color:#364059;
+    transition-duration:0.2s;
+}
+
+.chat-input-button::after{
+    content : "";
+    clear: both;
 }
