@@ -105,14 +105,39 @@
            </div>
         </div>
     </div>
-
 </div>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/4.6.2/firebase.js"></script>
+<script src="https://www.gstatic.com/firebasejs/4.6.2/firebase-messaging.js"></script>
+<script>
+  // Initialize Firebase and get token
+  var config = {
+    apiKey: "AIzaSyAPPNYDccB6vqZ5qCtuFtPn_A8wUi3lYzc",
+    authDomain: "testfirebase-94d52.firebaseapp.com",
+    databaseURL: "https://testfirebase-94d52.firebaseio.com",
+    projectId: "testfirebase-94d52",
+    storageBucket: "testfirebase-94d52.appspot.com",
+    messagingSenderId: "212939079989"
+  };
+  firebase.initializeApp(config);
+  const messaging = firebase.messaging();
+  //messaging.requestPermission();
+  var token = messaging.getToken();
+</script>
 <script>
     var app = angular.module("userChat", []);
-    app.controller("chat-controller", function($scope){
+    app.controller("chatController", function($scope, $http){
+		if (token) {
+			//sendTokenToServer(currentToken);
+			//updateUIForPushEnabled(currentToken);
+		} else {
+			//Fails
+		}
+	
+        //$http.get
+        //$scope.chats = [];
         
     });
 
