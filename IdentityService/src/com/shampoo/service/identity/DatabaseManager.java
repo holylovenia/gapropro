@@ -60,10 +60,10 @@ public class DatabaseManager {
     }
 
     //Register With Update Token
-    public void register(String username, String email, String fullName, String password, String phoneNumber, int isDriver, String profilePicture) {
+    public void register(String username, String email, String fullName, String password, String phoneNumber, int isDriver, String profilePicture, String userAgent, String ipAddress) {
         try {
             Timestamp expiredTime = new Timestamp(System.currentTimeMillis() + expiredDelay);
-            String access_token = new AccessToken().generateAccessToken(username, email, password);
+            String access_token = new AccessToken().generateAccessToken(username, email, password) + "#" + userAgent + "#" + ipAddress;
             String query = "INSERT INTO users(username, name, email, password, phone_no, profile_picture, is_driver, expired_time, access_token) VALUES("
                     + "'" + username + "'" + ",'" + fullName + "','" + email + "','" + password + "','" + phoneNumber + "','" + profilePicture + "'," +
                     Integer.toString(isDriver) + ",'" + expiredTime + "','" + access_token + "')";
@@ -86,7 +86,7 @@ public class DatabaseManager {
     }
 
     //Create Login Token Update to Database
-    public void updateExpiredTime(String access_token) {
+    public void updateExpiredTime(String access_token, String userAgent, String ipAddress) {
         try {
             if (access_token  != null) {
                 String selectQuery = "SELECT * FROM users WHERE access_token='" + access_token + "'";
@@ -95,7 +95,7 @@ public class DatabaseManager {
                 String username = resultSet.getString("username");
                 String email = resultSet.getString("email");
                 String password = resultSet.getString("password");
-                String token = new AccessToken().generateAccessToken(username, email, password);
+                String token = new AccessToken().generateAccessToken(username, email, password) + "#" + userAgent + "#" + ipAddress;
                 Timestamp newTimestamp = new Timestamp(System.currentTimeMillis() + expiredDelay);
                 String updateQuery = "UPDATE users SET access_token='" + token + "'" + ",expired_time='" + newTimestamp +
                         "' WHERE access_token='" + access_token + "'";
@@ -145,7 +145,7 @@ public class DatabaseManager {
         }
     }
 
-    public String checkAccessToken(String access_token) throws SQLException {
+    public String checkAccessToken(String access_token, String userAgent, String ipAddress) throws SQLException {
         String query = "SELECT * FROM users WHERE access_token='" + access_token + "'";
         System.out.println(query);
         ResultSet resultSet = statement.executeQuery(query);
@@ -157,7 +157,7 @@ public class DatabaseManager {
             if (expired.before(now)) {
                 if(canTokenBeRenewed(expired, now)) {
                     System.out.println("CanBeRenewed: TRUE");
-                    updateExpiredTime(access_token);
+                    updateExpiredTime(access_token, userAgent, ipAddress);
                     return "valid";
                 } else {
                     System.out.println("CanBeRenewed: FALSE");
@@ -220,5 +220,12 @@ public class DatabaseManager {
         System.out.println(query);
         ResultSet resultSet = statement.executeQuery(query);
         return convertToJson(resultSet);
+    }
+
+    public Integer fetchUserId(String username) throws SQLException {
+        String query = "SELECT id FROM users WHERE username='" + username + "'";
+        ResultSet resultSet = statement.executeQuery(query);
+        resultSet.next();
+        return resultSet.getInt("id");
     }
 }

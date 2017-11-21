@@ -12,5 +12,5 @@ import java.sql.SQLException;
 public interface TokenChecker {
 
     @WebMethod
-    public String checkToken(String access_token);
+    public String checkToken(String access_token, String userAgent, String ipAddress);
 }
