@@ -6,7 +6,8 @@ var Schema = databaseManager.Schema;
 var availabilitySchema = new Schema({
     user_id: Number,
     online: { type: Number, default: 1 },
-    finding_order: { type: Number, default: 0 }
+    finding_order: { type: Number, default: 0 },
+    token: String
 });
 
 // the schema is useless so far

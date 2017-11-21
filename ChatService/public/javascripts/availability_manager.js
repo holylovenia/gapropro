@@ -1,3 +1,8 @@
+/**
+ * Availability Manager
+ * Manages availability of a driver
+ * Main route : /availability
+ */
 var express = require('express');
 var router = express.Router();
 var cors = require('cors');
@@ -14,7 +19,7 @@ router.post('/add_new_user', function (req, res, next) {
         user_id: uId
     });
     availability.save();
-    res.send("User " + uId + " has been created.");
+    res.send('{"status":true}');
 });
 
 router.post('/set_status', function (req, res, next) {
@@ -59,14 +64,17 @@ router.post('/set_online', function (req, res, next) {
 router.post('/set_finding_order', function (req, res, next) {
     var uId = req.body.userId;
     var status = req.body.findingOrder;
+    var fb_token = req.body.fb_token;
     Availability.findOne({user_id: uId}, function (err, user) {
         if (user !== null) {
             user.finding_order = status;
+            user.token = fb_token;
             user.save();
         } else {
             var availability = new Availability({
                 user_id: uId,
-                finding_order: status
+                finding_order: status,
+                token: fb_token
             });
             availability.save();
         }
