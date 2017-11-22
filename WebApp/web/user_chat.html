@@ -2,6 +2,7 @@
 <head>
     <title>Order</title>
     <link rel="stylesheet" type="text/css" href="styles/order.css">
+    <link rel="manifest" href="etc/manifest.json">
     <script src="js/handler.js"></script>
 </head>
 <body>
@@ -92,7 +93,7 @@
                     </div>
                 </div>
                 <div class="chat-input">
-                    <input type="text" class="chat-input-message" ng-model="input">
+                    <input type="text" class="chat-input-message" ng-model="input" ng-keyup="sendMsgEnter($event)">
                     <button type="button" class="chat-input-button" ng-click="sendMsg()">Kirim</button>
                 </div>
             </div>
@@ -105,21 +106,6 @@
 <script src="https://www.gstatic.com/firebasejs/4.6.2/firebase.js"></script>
 <script src="https://www.gstatic.com/firebasejs/4.6.2/firebase-messaging.js"></script>
 <script>
-    // Initialize Firebase and get token
-    var config = {
-        apiKey: "AIzaSyCSn3EiT3BZ-GXYq_uxvU-dFxx2C_rrW5I",
-        authDomain: "gapropro-b0e07.firebaseapp.com",
-        databaseURL: "https://gapropro-b0e07.firebaseio.com",
-        projectId: "gapropro-b0e07",
-        storageBucket: "gapropro-b0e07.appspot.com",
-        messagingSenderId: "990522297808"
-    };
-    firebase.initializeApp(config);
-    const messaging = firebase.messaging();
-    //messaging.requestPermission();
-    var token = messaging.getToken();
-</script>
-<script>
     var app = angular.module("userChat", []);
 
     app.controller("chatController", function ($scope, $http, $rootScope) {
@@ -127,9 +113,35 @@
         // TODO : Change firstId to parameter ID and secondId to driver ID
         $rootScope.myId = 1;
         $rootScope.targetId = 2;
-        $scope.myToken = token;
+        $scope.tokenSet = false;
         $scope.message = [];
         $scope.input = "";
+        $scope.setupFirebase = function () {
+            // Initialize Firebase and get token
+            var config = {
+                apiKey: "AIzaSyCSn3EiT3BZ-GXYq_uxvU-dFxx2C_rrW5I",
+                authDomain: "gapropro-b0e07.firebaseapp.com",
+                databaseURL: "https://gapropro-b0e07.firebaseio.com",
+                projectId: "gapropro-b0e07",
+                storageBucket: "gapropro-b0e07.appspot.com",
+                messagingSenderId: "990522297808"
+            };
+            firebase.initializeApp(config);
+
+            const messaging = firebase.messaging();
+            messaging.requestPermission();
+            messaging.getToken().then(function (currentToken) {
+                if (currentToken) {
+                    $http.post("http://localhost:3000/firebase/set_token",{"userId":$rootScope.myId, "firebaseToken":currentToken})
+                    $scope.tokenSet = true;
+                } else {
+                    console.log('No Instance ID token available. Request permission to generate one.');
+                }
+            });
+            messaging.onMessage(function (payload) {
+                console.log("Message received. ", payload);
+            });
+        };
         /**
          * Retrieve messages from db and display
          */
@@ -156,13 +168,21 @@
                     "senderId": $rootScope.myId,
                     "receiverId": $rootScope.targetId,
                     "chatMessage": $scope.input
-                }).then($scope.updateMsg());
+                }).then(function () {
+                    $scope.updateMsg();
+                });
             }
+            $scope.message.push(message);
             $scope.input = "";
+        };
+        $scope.sendMsgEnter = function (event) {
+            if (event.keyCode === 13) {
+                $scope.sendMsg();
+            }
         };
         // Scripts to run
         $scope.updateMsg();
-
+        $scope.setupFirebase();
     });
 
 </script>

@@ -46,13 +46,13 @@
             LOOKING FOR AN ORDER
         </h1>
         <div class="order-status">
-            <button type="button" class="find-order">
+            <button type="button" class="find-order" ng-show="!finding_order" ng-click="findOrder()">
                 Find Order
             </button>
 
-            <div class="status" ng-show=false>Finding Order</div>
-            <div class="chat-username" ng-show=false>lalala</div>
-            <button type="button" class="cancel" ng-show=false>
+            <div class="status" ng-show="finding_order">Finding Order</div>
+            <div class="chat-username" ng-show="finding_order">lalala</div>
+            <button type="button" class="cancel" ng-show="finding_order" ng-click="cancelFindOrder()">
                 Cancel
             </button>
         </div>
@@ -65,8 +65,8 @@
                     </div>
                 </div>
                 <div class="chat-input">
-                    <input type="text" class="chat-input-message">
-                    <button type="button" class="chat-input-button">Kirim</button>
+                    <input type="text" class="chat-input-message" ng-click="sendMsgEnter()">
+                    <button type="button" class="chat-input-button" ng-click="sendMsg()">Kirim</button>
                 </div>
             </div>
         </div>
@@ -78,29 +78,27 @@
 <script src="https://www.gstatic.com/firebasejs/4.6.2/firebase.js"></script>
 <script src="https://www.gstatic.com/firebasejs/4.6.2/firebase-messaging.js"></script>
 <script>
-    // Initialize Firebase and get token
-    var config = {
-        apiKey: "AIzaSyCSn3EiT3BZ-GXYq_uxvU-dFxx2C_rrW5I",
-        authDomain: "gapropro-b0e07.firebaseapp.com",
-        databaseURL: "https://gapropro-b0e07.firebaseio.com",
-        projectId: "gapropro-b0e07",
-        storageBucket: "gapropro-b0e07.appspot.com",
-        messagingSenderId: "990522297808"
-    };
-    firebase.initializeApp(config);
-    const messaging = firebase.messaging();
-    messaging.requestPermission();
-    var token = messaging.getToken();
-</script>
-<script>
     var app = angular.module("driverChat", []);
     /**
      * Order Controller
      * Mengatur setting pengambilan order
      */
-    app.controller("orderController", function ($scope, $http) {
-
-
+    app.controller("orderController", function ($scope, $http, $rootScope) {
+        $rootScope.finding_order = false;
+        $scope.findOrder = function () {
+            $rootScope.finding_order = true;
+            $http.post("http://localhost:3000/availability/set_finding_order", {
+                "userId": $rootScope.myId,
+                "findingOrder": 1
+            })
+        };
+        $scope.cancelFindOrder = function () {
+            $rootScope.finding_order = false;
+            $http.post("http://localhost:3000/availability/set_finding_order", {
+                "userId": $rootScope.myId,
+                "findingOrder": 0
+            })
+        }
     });
 
     /**
@@ -109,9 +107,43 @@
      */
     app.controller("chatController", function ($scope, $http, $rootScope) {
         // TODO : Change firstId to parameter ID and secondId to driver ID
-        $rootScope.myId = 1;
-        $rootScope.targetId = 2;
+        $rootScope.myId = 2;
+        $rootScope.targetId = 1;
+        $scope.tokenSet = false;
         $scope.message = [];
+        $scope.input = "";
+        $scope.setupFirebase = function () {
+            // Initialize Firebase and get token
+            var config = {
+                apiKey: "AIzaSyCSn3EiT3BZ-GXYq_uxvU-dFxx2C_rrW5I",
+                authDomain: "gapropro-b0e07.firebaseapp.com",
+                databaseURL: "https://gapropro-b0e07.firebaseio.com",
+                projectId: "gapropro-b0e07",
+                storageBucket: "gapropro-b0e07.appspot.com",
+                messagingSenderId: "990522297808"
+            };
+            firebase.initializeApp(config);
+
+            const messaging = firebase.messaging();
+            messaging.requestPermission();
+            messaging.getToken().then(function (currentToken) {
+                if (currentToken) {
+                    $http.post("http://localhost:3000/firebase/set_token", {
+                        "userId": $rootScope.myId,
+                        "firebaseToken": currentToken
+                    })
+                    $scope.tokenSet = true;
+                } else {
+                    console.log('No Instance ID token available. Request permission to generate one.');
+                }
+            });
+            messaging.onMessage(function (payload) {
+                console.log("Message received. ", payload);
+            });
+        };
+        /**
+         * Retrieve messages from db and display
+         */
         $scope.updateMsg = function () {
             $http.post("http://localhost:3000/chat/get_chat_log", {
                 "firstId": $rootScope.myId,
@@ -120,8 +152,36 @@
                 $scope.message = response.data.result;
             })
         };
-
+        /**
+         * Sends message to target
+         */
+        $scope.sendMsg = function () {
+            $scope.input = $scope.input.trim();
+            if ($scope.input.length !== 0) {
+                var message = {
+                    "sender_id": $rootScope.myId,
+                    "receiver_id": $rootScope.targetId,
+                    "message": $scope.input
+                };
+                $http.post("http://localhost:3000/chat/add_new_chat", {
+                    "senderId": $rootScope.myId,
+                    "receiverId": $rootScope.targetId,
+                    "chatMessage": $scope.input
+                }).then(function () {
+                    $scope.updateMsg();
+                });
+            }
+            $scope.message.push(message);
+            $scope.input = "";
+        };
+        $scope.sendMsgEnter = function (event) {
+            if (event.keyCode === 13) {
+                $scope.sendMsg();
+            }
+        };
+        // Scripts to run
         $scope.updateMsg();
+        $scope.setupFirebase();
     });
 
 </script>
