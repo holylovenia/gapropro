@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 public class SignUpServlet extends HttpServlet {
@@ -49,7 +50,8 @@ public class SignUpServlet extends HttpServlet {
             if (access_token != null) {
                 JSONObject access_token_JSON = new JSONObject(access_token);
                 if (!access_token_JSON.has("error")) {
-                    Cookie access_token_cookie = new Cookie("access_token", URLEncoder.encode(access_token_JSON.getString("access_token"), "UTF-8"));
+                    String token = access_token_JSON.getString("access_token");
+                    Cookie access_token_cookie = new Cookie("access_token", token);
                     Cookie expiry_time_cookie = new Cookie("expiry_time", Integer.toString(access_token_JSON.getInt("expiry_time")));
                     response.addCookie(access_token_cookie);
                     response.addCookie(expiry_time_cookie);
@@ -77,6 +79,18 @@ public class SignUpServlet extends HttpServlet {
                         response.sendRedirect("profile.jsp");
                     }
                 } else {
+                    if (access_token_JSON.getString("error").equals("username/email already taken")) {
+                        response.getOutputStream().println("<script type=\"text/javascript\">");
+                        response.getOutputStream().println("alert(\"Username or Email already taken\");");
+                        response.getOutputStream().println("window.location =\"handleLogout.jsp\"");
+                        response.getOutputStream().println("</script>");
+                    }
+                    else if (access_token_JSON.getString("error").equals("wrong confirm password")) {
+                        response.getOutputStream().println("<script type=\"text/javascript\">");
+                        response.getOutputStream().println("alert(\"Password does not match\");");
+                        response.getOutputStream().println("window.location =\"handleLogout.jsp\"");
+                        response.getOutputStream().println("</script>");
+                    }
                     response.sendRedirect("signup.jsp");
                 }
             }

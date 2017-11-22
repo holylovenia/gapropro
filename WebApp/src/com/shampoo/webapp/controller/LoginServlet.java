@@ -26,6 +26,7 @@ import java.net.MalformedURLException;
 import java.net.URLEncoder;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 public class LoginServlet extends HttpServlet {
@@ -51,9 +52,10 @@ public class LoginServlet extends HttpServlet {
             if (access_token != null) {
                 access_token_JSON = new JSONObject(access_token);
                 if (!access_token_JSON.has("error")) {
-                    Cookie access_token_cookie = new Cookie("access_token", URLEncoder.encode(access_token_JSON.getString("access_token"), "UTF-8"));
+                    String token = access_token_JSON.getString("access_token");
+                    Cookie access_token_cookie = new Cookie("access_token", token);
                     Cookie expiry_time_cookie = new Cookie("expiry_time", Integer.toString(access_token_JSON.getInt("expiry_time")));
-                    temp_access_token = access_token_JSON.getString("access_token");
+                    temp_access_token = token;
 
                     response.addCookie(access_token_cookie);
                     response.addCookie(expiry_time_cookie);

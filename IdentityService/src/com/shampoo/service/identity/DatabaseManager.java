@@ -59,11 +59,11 @@ public class DatabaseManager {
         return null;
     }
 
-    //Register With Update Token
     public void register(String username, String email, String fullName, String password, String phoneNumber, int isDriver, String profilePicture, String userAgent, String ipAddress) {
         try {
             Timestamp expiredTime = new Timestamp(System.currentTimeMillis() + expiredDelay);
             String access_token = new AccessToken().generateAccessToken(username, email, password) + "#" + userAgent + "#" + ipAddress;
+//            String access_token_encoded = Base64.getEncoder().encodeToString(access_token.getBytes());
             String query = "INSERT INTO users(username, name, email, password, phone_no, profile_picture, is_driver, expired_time, access_token) VALUES("
                     + "'" + username + "'" + ",'" + fullName + "','" + email + "','" + password + "','" + phoneNumber + "','" + profilePicture + "'," +
                     Integer.toString(isDriver) + ",'" + expiredTime + "','" + access_token + "')";
@@ -85,17 +85,17 @@ public class DatabaseManager {
         statement.executeUpdate(updateQuery);
     }
 
-    // TODO: MODIFY
-    public void updateExpiredTime(String access_token) {
+    public void updateExpiredTime(String access_token, String userAgent, String ipAddress) {
         try {
             if (access_token  != null) {
-                String selectQuery = "SELECT * FROM users WHERE access_token='" + access_token + "'";
+                String selectQuery = "SELECT * FROM users WHERE access_token LIKE '" + access_token + "'";
                 ResultSet resultSet = statement.executeQuery(selectQuery);
                 resultSet.next();
                 String username = resultSet.getString("username");
                 String email = resultSet.getString("email");
                 String password = resultSet.getString("password");
-                String token = new AccessToken().generateAccessToken(username, email, password) + "#" + "<userAgent>" + "#" + "<ipAddress>";
+                String token = new AccessToken().generateAccessToken(username, email, password) + "#" + userAgent + "#" + ipAddress;
+//                String token_encoded = Base64.getEncoder().encodeToString(token.getBytes());
                 Timestamp newTimestamp = new Timestamp(System.currentTimeMillis() + expiredDelay);
                 String updateQuery = "UPDATE users SET access_token='" + token + "'" + ",expired_time='" + newTimestamp +
                         "' WHERE access_token='" + access_token + "'";
@@ -147,6 +147,10 @@ public class DatabaseManager {
 
     public String checkAccessToken(String access_token) throws SQLException {
         String[] parts = access_token.split("#");
+        System.out.println("checkAccessToken:");
+        for (String part : parts) {
+            System.out.println(part);
+        }
         if (parts.length == 3) {
             String token = parts[0];
             String userAgent = parts[1];
@@ -160,7 +164,11 @@ public class DatabaseManager {
                 return "invalid";
             } else {
                 String dbToken = resultSet.getString("access_token");
-                String[] dbTokenParts = access_token.split("#");
+                String[] dbTokenParts = dbToken.split("#");
+                System.out.println("dbToken:");
+                for (String part : dbTokenParts) {
+                    System.out.println(part);
+                }
 
                 if (dbTokenParts.length == 3) {
                     String dbUserAgent = dbTokenParts[1];
@@ -171,29 +179,29 @@ public class DatabaseManager {
                     if (!userAgent.equals(dbUserAgent)) {
                         return "invalid_agent";
                     }
+
+                    Timestamp now = new Timestamp(System.currentTimeMillis());
+                    Timestamp expired = resultSet.getTimestamp("expired_time");
+                    if (expired.before(now)) {
+                        if(canTokenBeRenewed(expired, now) && ipAddress.equals(dbIpAddress) && userAgent.equals(dbUserAgent)) {
+                            System.out.println("CanBeRenewed: TRUE");
+                            updateExpiredTime(access_token, dbUserAgent, dbIpAddress);
+                            return "valid";
+                        } else {
+                            System.out.println("CanBeRenewed: FALSE");
+                            return "expired";
+                        }
+                    } else {
+                        return "valid";
+                    }
                 }
                 else {
                     return "invalid_malformed";
                 }
-
-                Timestamp now = new Timestamp(System.currentTimeMillis());
-                Timestamp expired = resultSet.getTimestamp("expired_time");
-                if (expired.before(now)) {
-                    if(canTokenBeRenewed(expired, now)) {
-                        System.out.println("CanBeRenewed: TRUE");
-                        updateExpiredTime(access_token);
-                        return "valid";
-                    } else {
-                        System.out.println("CanBeRenewed: FALSE");
-                        return "expired";
-                    }
-                } else {
-                    return "valid";
-                }
             }
         }
         else {
-            return "invalid";
+            return "invalid_malformed";
         }
     }
 

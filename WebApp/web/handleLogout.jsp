@@ -24,7 +24,7 @@
     HttpClient httpClient = new DefaultHttpClient();
     HttpPost httpPost = new HttpPost("http://localhost:9001/logout");
 
-    List<BasicNameValuePair> params = new ArrayList<>();
+    List<BasicNameValuePair> params = new ArrayList<BasicNameValuePair>();
 
     System.out.println("Logout ID:" + Integer.toString(userData.getUserID()));
     params.add(new BasicNameValuePair("userID", Integer.toString(userData.getUserID())));

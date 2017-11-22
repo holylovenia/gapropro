@@ -7,7 +7,6 @@ import javax.jws.WebService;
 @WebService (endpointInterface = "com.shampoo.service.identity.responder.TokenChecker")
 public class TokenCheckerImpl implements TokenChecker {
 
-    // TODO: MODIFY
     @Override
     public String checkToken(String access_token) {
         DatabaseManager databaseManager;

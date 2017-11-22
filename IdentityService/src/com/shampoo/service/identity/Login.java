@@ -39,7 +39,7 @@ public class Login extends javax.servlet.http.HttpServlet {
                 json.put("access_token", access_token);
                 json.put("expiry_time", DatabaseManager.expiredDelay);
                 databaseManager.updateAccessToken(userID, access_token);
-                databaseManager.updateExpiredTime(access_token);
+                databaseManager.updateExpiredTime(access_token, userAgent, ipAddress);
                 sendPost(userID);
             } else {
                 json.put("error", "user not found");
