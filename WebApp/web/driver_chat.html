@@ -49,14 +49,14 @@
             <button type="button" class="find-order">
                 Find Order
             </button>
-            
+
             <div class="status" ng-show=false>Finding Order</div>
             <div class="chat-username" ng-show=false>lalala</div>
             <button type="button" class="cancel" ng-show=false>
                 Cancel
             </button>
         </div>
-        <div class="order-form" ng-show=false>
+        <div class="order-form" ng-show="false">
             <div class="chat-box" ng-controller="chatController">
                 <div class="chat-message">
                     <div class="message-wrapper" ng-repeat="x in message"
@@ -89,23 +89,39 @@
     };
     firebase.initializeApp(config);
     const messaging = firebase.messaging();
-    //messaging.requestPermission();
+    messaging.requestPermission();
     var token = messaging.getToken();
 </script>
 <script>
     var app = angular.module("driverChat", []);
-    app.controller("chatController", function ($scope, $http) {
-        $scope.myId = 1;
-        $scope.targetId = 2;
-        $scope.message = [];
+    /**
+     * Order Controller
+     * Mengatur setting pengambilan order
+     */
+    app.controller("orderController", function ($scope, $http) {
 
+
+    });
+
+    /**
+     * Chat Controller
+     * Mengatur pengiriman dan penerimaan pesan, serta mengambil history
+     */
+    app.controller("chatController", function ($scope, $http, $rootScope) {
         // TODO : Change firstId to parameter ID and secondId to driver ID
-        $http.post("http://localhost:3000/chat/get_chat_log", {
-            "firstId": $scope.myId,
-            "secondId": $scope.targetId
-        }).then(function (response) {
-            $scope.message = response.data.result;
-        });
+        $rootScope.myId = 1;
+        $rootScope.targetId = 2;
+        $scope.message = [];
+        $scope.updateMsg = function () {
+            $http.post("http://localhost:3000/chat/get_chat_log", {
+                "firstId": $rootScope.myId,
+                "secondId": $rootScope.targetId
+            }).then(function (response) {
+                $scope.message = response.data.result;
+            })
+        };
+
+        $scope.updateMsg();
     });
 
 </script>

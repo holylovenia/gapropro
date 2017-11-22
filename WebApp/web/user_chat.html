@@ -92,8 +92,8 @@
                     </div>
                 </div>
                 <div class="chat-input">
-                    <input type="text" class="chat-input-message">
-                    <button type="button" class="chat-input-button">Kirim</button>
+                    <input type="text" class="chat-input-message" ng-model="input">
+                    <button type="button" class="chat-input-button" ng-click="sendMsg()">Kirim</button>
                 </div>
             </div>
         </div>
@@ -121,18 +121,48 @@
 </script>
 <script>
     var app = angular.module("userChat", []);
-    app.controller("chatController", function ($scope, $http) {
-        $scope.myId = 1;
-        $scope.targetId = 2;
-        $scope.message = [];
 
+    app.controller("chatController", function ($scope, $http, $rootScope) {
+        // Scope Declaration
         // TODO : Change firstId to parameter ID and secondId to driver ID
-        $http.post("http://localhost:3000/chat/get_chat_log", {
-            "firstId": $scope.myId,
-            "secondId": $scope.targetId
-        }).then(function (response) {
-            $scope.message = response.data.result;
-        });
+        $rootScope.myId = 1;
+        $rootScope.targetId = 2;
+        $scope.myToken = token;
+        $scope.message = [];
+        $scope.input = "";
+        /**
+         * Retrieve messages from db and display
+         */
+        $scope.updateMsg = function () {
+            $http.post("http://localhost:3000/chat/get_chat_log", {
+                "firstId": $rootScope.myId,
+                "secondId": $rootScope.targetId
+            }).then(function (response) {
+                $scope.message = response.data.result;
+            })
+        };
+        /**
+         * Sends message to target
+         */
+        $scope.sendMsg = function () {
+            $scope.input = $scope.input.trim();
+            if ($scope.input.length !== 0) {
+                var message = {
+                    "sender_id": $rootScope.myId,
+                    "receiver_id": $rootScope.targetId,
+                    "message": $scope.input
+                };
+                $http.post("http://localhost:3000/chat/add_new_chat", {
+                    "senderId": $rootScope.myId,
+                    "receiverId": $rootScope.targetId,
+                    "chatMessage": $scope.input
+                }).then($scope.updateMsg());
+            }
+            $scope.input = "";
+        };
+        // Scripts to run
+        $scope.updateMsg();
+
     });
 
 </script>
