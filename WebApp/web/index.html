@@ -7,15 +7,15 @@ ADD EMAIL
 
 Send Chat
 <form method="POST" action="http://localhost:3000/chat/add_new_chat">
-	<input type="text" name="senderId">
-	<input type="text" name="receiverId">
-	<input type="text" name="chatMessage">
+	<input type="text" name="senderId" placeholder="sender">
+	<input type="text" name="receiverId" placeholder="receiver">
+	<input type="text" name="chatMessage" placeholder="message">
 	<input type="submit">
 </form>
 
 Get Chat id1,2
 <form method="POST" action="http://localhost:3000/chat/get_chat_log">
-	<input type="text" name="firstId">
-	<input type="text" name="secondId">
+	<input type="text" name="firstId" placeholder="first">
+	<input type="text" name="secondId" placeholder="second">
 	<input type="submit">
 </form>
