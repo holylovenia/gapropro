@@ -30,6 +30,21 @@ public class HideServlet extends HttpServlet {
                     response.getOutputStream().println("alert(\"Your token is invalid or expired!\");");
                     response.getOutputStream().println("window.location =\"handleLogout.jsp\"");
                     response.getOutputStream().println("</script>");
+                } else if (resp.equals("invalid_ip")) {
+                    response.getOutputStream().println("<script type=\"text/javascript\">");
+                    response.getOutputStream().println("alert(\"Invalid ip address detected!\");");
+                    response.getOutputStream().println("window.location =\"handleLogout.jsp\"");
+                    response.getOutputStream().println("</script>");
+                } else if (resp.equals("invalid_agent")) {
+                    response.getOutputStream().println("<script type=\"text/javascript\">");
+                    response.getOutputStream().println("alert(\"Invalid user agent detected!\");");
+                    response.getOutputStream().println("window.location =\"handleLogout.jsp\"");
+                    response.getOutputStream().println("</script>");
+                } else if (resp.equals("invalid_malformed")) {
+                    response.getOutputStream().println("<script type=\"text/javascript\">");
+                    response.getOutputStream().println("alert(\"Malformed token detected!\");");
+                    response.getOutputStream().println("window.location =\"handleLogout.jsp\"");
+                    response.getOutputStream().println("</script>");
                 } else {
                     response.sendRedirect("/transactiondriver");
                 }
@@ -43,6 +58,21 @@ public class HideServlet extends HttpServlet {
                 } else if (resp.equals("invalid") || resp.equals("expired")) {
                     response.getOutputStream().println("<script type=\"text/javascript\">");
                     response.getOutputStream().println("alert(\"Your token is invalid or expired!\");");
+                    response.getOutputStream().println("window.location =\"handleLogout.jsp\"");
+                    response.getOutputStream().println("</script>");
+                } else if (resp.equals("invalid_ip")) {
+                    response.getOutputStream().println("<script type=\"text/javascript\">");
+                    response.getOutputStream().println("alert(\"Invalid ip address detected!\");");
+                    response.getOutputStream().println("window.location =\"handleLogout.jsp\"");
+                    response.getOutputStream().println("</script>");
+                } else if (resp.equals("invalid_malformed")) {
+                    response.getOutputStream().println("<script type=\"text/javascript\">");
+                    response.getOutputStream().println("alert(\"Malformed token detected!\");");
+                    response.getOutputStream().println("window.location =\"handleLogout.jsp\"");
+                    response.getOutputStream().println("</script>");
+                } else if (resp.equals("invalid_address")) {
+                    response.getOutputStream().println("<script type=\"text/javascript\">");
+                    response.getOutputStream().println("alert(\"Invalid user agent detected!\");");
                     response.getOutputStream().println("window.location =\"handleLogout.jsp\"");
                     response.getOutputStream().println("</script>");
                 } else {

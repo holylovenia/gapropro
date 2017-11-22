@@ -27,12 +27,27 @@ public class TransactionUserServlet extends HttpServlet {
             TransactionClient transactionClient = new TransactionClient();
             String result = transactionClient.getTransaction().getVisibleUserTransactions(new CookieHandler().getAccessTokenCookie(request));
             System.out.println("TransactionUser " + result);
-            if(result.equals("invalid") || result.equals("expired")) {
+            if (result.equals("invalid") || result.equals("expired")) {
                 response.getOutputStream().println("<script type=\"text/javascript\">");
                 response.getOutputStream().println("alert(\"Your token is invalid or expired!\");");
                 response.getOutputStream().println("window.location =\"handleLogout.jsp\"");
                 response.getOutputStream().println("</script>");
-            } else if(result.equals("Error")) {
+            } else if (result.equals("invalid_ip")) {
+                response.getOutputStream().println("<script type=\"text/javascript\">");
+                response.getOutputStream().println("alert(\"Invalid ip address detected!\");");
+                response.getOutputStream().println("window.location =\"handleLogout.jsp\"");
+                response.getOutputStream().println("</script>");
+            } else if (result.equals("invalid_agent")) {
+                response.getOutputStream().println("<script type=\"text/javascript\">");
+                response.getOutputStream().println("alert(\"Invalid user agent detected!\");");
+                response.getOutputStream().println("window.location =\"handleLogout.jsp\"");
+                response.getOutputStream().println("</script>");
+            } else if (result.equals("invalid_malformed")) {
+                response.getOutputStream().println("<script type=\"text/javascript\">");
+                response.getOutputStream().println("alert(\"Malformed token detected!\");");
+                response.getOutputStream().println("window.location =\"handleLogout.jsp\"");
+                response.getOutputStream().println("</script>");
+            } else if (result.equals("Error")) {
                 response.getOutputStream().println("<script type=\"text/javascript\">");
                 response.getOutputStream().println("alert(\"Failed to transaction history!\");");
                 response.getOutputStream().println("window.location =\"history.jsp\"");

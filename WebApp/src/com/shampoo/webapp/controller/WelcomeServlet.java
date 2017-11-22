@@ -25,7 +25,8 @@ public class WelcomeServlet extends HttpServlet {
             try {
                 UserManagementClient userManagementClient = new UserManagementClient();
                 String currentUserData = userManagementClient.getUserManagement().getCurrentUserData(new CookieHandler().getAccessTokenCookie(request));
-                if (currentUserData.equals("expired") || currentUserData.equals("invalid") || currentUserData.equals("Error")) {
+                if (currentUserData.equals("expired") || currentUserData.equals("invalid") || currentUserData.equals("Error") ||
+                        currentUserData.equals("invalid_ip") || currentUserData.equals("invalid_agent") || currentUserData.equals("invalid_malformed")) {
                     response.sendRedirect("login.jsp");
                 } else {
                     JSONArray jsonArray = new JSONArray(currentUserData);
@@ -54,7 +55,8 @@ public class WelcomeServlet extends HttpServlet {
 
                         PreferredLocationClient preferredLocationClient = new PreferredLocationClient();
                         String preferredLocationResult = preferredLocationClient.getPreferredLocation().getUserPreferredLocations(access_token);
-                        if(preferredLocationResult.equals("expired") || preferredLocationResult.equals("invalid") || preferredLocationResult.equals("Error")) {
+                        if(preferredLocationResult.equals("expired") || preferredLocationResult.equals("invalid") || preferredLocationResult.equals("Error") ||
+                                preferredLocationClient.equals("invalid_ip") || preferredLocationClient.equals("invalid_agent") || preferredLocationClient.equals("invalid_malformed")) {
                             response.sendRedirect("login.jsp");
                         } else {
                             JSONArray preferredLocationsJSON = new JSONArray(preferredLocationResult);
@@ -95,7 +97,8 @@ public class WelcomeServlet extends HttpServlet {
     public JSONArray getPreferredLocation(HttpServletRequest request, HttpServletResponse response) throws IOException, SQLException {
         PreferredLocationClient preferredLocationClient = new PreferredLocationClient();
         String preferredLocations = preferredLocationClient.getPreferredLocation().getUserPreferredLocations(new CookieHandler().getAccessTokenCookie(request));
-        if (preferredLocations.equals("expired") || preferredLocationClient.equals("invalid") || preferredLocations.equals("Error")) {
+        if (preferredLocations.equals("expired") || preferredLocationClient.equals("invalid") || preferredLocations.equals("Error") ||
+                preferredLocationClient.equals("invalid_ip") || preferredLocationClient.equals("invalid_agent") || preferredLocationClient.equals("invalid_malformed")) {
             response.sendRedirect("login.jsp");
         } else {
             return new JSONArray(preferredLocations);

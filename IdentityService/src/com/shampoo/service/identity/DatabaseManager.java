@@ -85,8 +85,8 @@ public class DatabaseManager {
         statement.executeUpdate(updateQuery);
     }
 
-    //Create Login Token Update to Database
-    public void updateExpiredTime(String access_token, String userAgent, String ipAddress) {
+    // TODO: MODIFY
+    public void updateExpiredTime(String access_token) {
         try {
             if (access_token  != null) {
                 String selectQuery = "SELECT * FROM users WHERE access_token='" + access_token + "'";
@@ -95,7 +95,7 @@ public class DatabaseManager {
                 String username = resultSet.getString("username");
                 String email = resultSet.getString("email");
                 String password = resultSet.getString("password");
-                String token = new AccessToken().generateAccessToken(username, email, password) + "#" + userAgent + "#" + ipAddress;
+                String token = new AccessToken().generateAccessToken(username, email, password) + "#" + "<userAgent>" + "#" + "<ipAddress>";
                 Timestamp newTimestamp = new Timestamp(System.currentTimeMillis() + expiredDelay);
                 String updateQuery = "UPDATE users SET access_token='" + token + "'" + ",expired_time='" + newTimestamp +
                         "' WHERE access_token='" + access_token + "'";
@@ -145,27 +145,55 @@ public class DatabaseManager {
         }
     }
 
-    public String checkAccessToken(String access_token, String userAgent, String ipAddress) throws SQLException {
-        String query = "SELECT * FROM users WHERE access_token='" + access_token + "'";
-        System.out.println(query);
-        ResultSet resultSet = statement.executeQuery(query);
-        if (!resultSet.next()) {
-            return "invalid";
-        } else {
-            Timestamp now = new Timestamp(System.currentTimeMillis());
-            Timestamp expired = resultSet.getTimestamp("expired_time");
-            if (expired.before(now)) {
-                if(canTokenBeRenewed(expired, now)) {
-                    System.out.println("CanBeRenewed: TRUE");
-                    updateExpiredTime(access_token, userAgent, ipAddress);
-                    return "valid";
-                } else {
-                    System.out.println("CanBeRenewed: FALSE");
-                    return "expired";
-                }
+    public String checkAccessToken(String access_token) throws SQLException {
+        String[] parts = access_token.split("#");
+        if (parts.length == 3) {
+            String token = parts[0];
+            String userAgent = parts[1];
+            String ipAddress = parts[2];
+
+            // Modify query to match the token part
+            String query = "SELECT * FROM users WHERE access_token LIKE '" + token + "%'";
+            System.out.println(query);
+            ResultSet resultSet = statement.executeQuery(query);
+            if (!resultSet.next()) {
+                return "invalid";
             } else {
-                return "valid";
+                String dbToken = resultSet.getString("access_token");
+                String[] dbTokenParts = access_token.split("#");
+
+                if (dbTokenParts.length == 3) {
+                    String dbUserAgent = dbTokenParts[1];
+                    String dbIpAddress = dbTokenParts[2];
+                    if (!ipAddress.equals(dbIpAddress)) {
+                        return "invalid_ip";
+                    }
+                    if (!userAgent.equals(dbUserAgent)) {
+                        return "invalid_agent";
+                    }
+                }
+                else {
+                    return "invalid_malformed";
+                }
+
+                Timestamp now = new Timestamp(System.currentTimeMillis());
+                Timestamp expired = resultSet.getTimestamp("expired_time");
+                if (expired.before(now)) {
+                    if(canTokenBeRenewed(expired, now)) {
+                        System.out.println("CanBeRenewed: TRUE");
+                        updateExpiredTime(access_token);
+                        return "valid";
+                    } else {
+                        System.out.println("CanBeRenewed: FALSE");
+                        return "expired";
+                    }
+                } else {
+                    return "valid";
+                }
             }
+        }
+        else {
+            return "invalid";
         }
     }
 

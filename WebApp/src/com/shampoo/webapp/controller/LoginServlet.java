@@ -75,6 +75,21 @@ public class LoginServlet extends HttpServlet {
                             response.getOutputStream().println("alert(\"Failed to login!\");");
                             response.getOutputStream().println("window.location =\"login.jsp\"");
                             response.getOutputStream().println("</script>");
+                        } else if (result.equals("invalid_ip")) {
+                            response.getOutputStream().println("<script type=\"text/javascript\">");
+                            response.getOutputStream().println("alert(\"Invalid ip address detected!\");");
+                            response.getOutputStream().println("window.location =\"handleLogout.jsp\"");
+                            response.getOutputStream().println("</script>");
+                        } else if (result.equals("invalid_agent")) {
+                            response.getOutputStream().println("<script type=\"text/javascript\">");
+                            response.getOutputStream().println("alert(\"Invalid user agent detected!\");");
+                            response.getOutputStream().println("window.location =\"handleLogout.jsp\"");
+                            response.getOutputStream().println("</script>");
+                        } else if (result.equals("invalid_malformed")) {
+                            response.getOutputStream().println("<script type=\"text/javascript\">");
+                            response.getOutputStream().println("alert(\"Malformed token detected!\");");
+                            response.getOutputStream().println("window.location =\"handleLogout.jsp\"");
+                            response.getOutputStream().println("</script>");
                         } else {
                             JSONArray jsonArray = new JSONArray(result);
                             JSONObject json = jsonArray.getJSONObject(0);
@@ -110,6 +125,21 @@ public class LoginServlet extends HttpServlet {
                                     response.getOutputStream().println("<script type=\"text/javascript\">");
                                     response.getOutputStream().println("alert(\"Failed to login!\");");
                                     response.getOutputStream().println("window.location =\"login.jsp\"");
+                                    response.getOutputStream().println("</script>");
+                                } else if (preferredLocationResult.equals("invalid_ip")) {
+                                    response.getOutputStream().println("<script type=\"text/javascript\">");
+                                    response.getOutputStream().println("alert(\"Invalid ip address detected!\");");
+                                    response.getOutputStream().println("window.location =\"handleLogout.jsp\"");
+                                    response.getOutputStream().println("</script>");
+                                } else if (preferredLocationResult.equals("invalid_agent")) {
+                                    response.getOutputStream().println("<script type=\"text/javascript\">");
+                                    response.getOutputStream().println("alert(\"Invalid user agent detected!\");");
+                                    response.getOutputStream().println("window.location =\"handleLogout.jsp\"");
+                                    response.getOutputStream().println("</script>");
+                                } else if (preferredLocationResult.equals("invalid_malformed")) {
+                                    response.getOutputStream().println("<script type=\"text/javascript\">");
+                                    response.getOutputStream().println("alert(\"Malformed token detected!\");");
+                                    response.getOutputStream().println("window.location =\"handleLogout.jsp\"");
                                     response.getOutputStream().println("</script>");
                                 } else {
                                     JSONArray preferredLocationsJSON = new JSONArray(preferredLocationResult);
