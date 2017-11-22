@@ -45,7 +45,7 @@
         <h1 class="order-header">
             LOOKING FOR AN ORDER
         </h1>
-        <div class="order-status">
+        <div class="order-status" ng-controller="orderController">
             <button type="button" class="find-order" ng-show="!finding_order" ng-click="findOrder()">
                 Find Order
             </button>
@@ -56,7 +56,7 @@
                 Cancel
             </button>
         </div>
-        <div class="order-form" ng-show="false">
+        <div class="order-form" ng-show="order_found">
             <div class="chat-box" ng-controller="chatController">
                 <div class="chat-message">
                     <div class="message-wrapper" ng-repeat="x in message"
@@ -85,6 +85,7 @@
      */
     app.controller("orderController", function ($scope, $http, $rootScope) {
         $rootScope.finding_order = false;
+        $rootScope.order_found = false;
         $scope.findOrder = function () {
             $rootScope.finding_order = true;
             $http.post("http://localhost:3000/availability/set_finding_order", {

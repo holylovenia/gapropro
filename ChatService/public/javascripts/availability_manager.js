@@ -103,4 +103,8 @@ router.get('/get_available_users', function (req, res, next) {
     });
 });
 
+router.get('/choose_driver', function(req, res){
+
+});
+
 module.exports = router;

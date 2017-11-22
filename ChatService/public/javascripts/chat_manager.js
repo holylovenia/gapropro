@@ -14,12 +14,6 @@ router.use(bodyParser());
 var databaseManager = require('./model/mongo_manager');
 var Chat = require('./model/chat');
 
-router.use(function (req, res, next) {
-    res.set("Access-Control-Allow-Origin", "*");
-    res.set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    next();
-});
-
 router.post('/add_new_chat', function (req, res, next) {
     var sId = parseInt(req.body.senderId);
     var rId = parseInt(req.body.receiverId);
