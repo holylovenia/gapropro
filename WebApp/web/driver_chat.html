@@ -41,7 +41,7 @@
             </a>
         </div>
     </div>
-    <div class="order-body" ng-app>
+    <div class="order-body" ng-app="driverChat">
         <h1 class="order-header">
             LOOKING FOR AN ORDER
         </h1>
@@ -57,15 +57,17 @@
             </button>
         </div>
         <div class="order-form" ng-show=false>
-            <div class="chat-box">
-               <div class="chat-message">
-                    <div class="message-wrapper from-sender"><div class="message">Hello!</div></div>
-                    <div class="message-wrapper to-sender"><div class="message">Hi!</div></div>
-               </div>
-               <div class="chat-input">
-                   <input type="text" class="chat-input-message">
-                   <button type="button" class="chat-input-button">Kirim</button>
-               </div>
+            <div class="chat-box" ng-controller="chatController">
+                <div class="chat-message">
+                    <div class="message-wrapper" ng-repeat="x in message"
+                         ng-class="x.sender_id == myId ? 'from-sender' : 'to-sender'">
+                        <div class="message">{{x.message}}</div>
+                    </div>
+                </div>
+                <div class="chat-input">
+                    <input type="text" class="chat-input-message">
+                    <button type="button" class="chat-input-button">Kirim</button>
+                </div>
             </div>
         </div>
     </div>
@@ -73,5 +75,39 @@
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/4.6.2/firebase.js"></script>
+<script src="https://www.gstatic.com/firebasejs/4.6.2/firebase-messaging.js"></script>
+<script>
+    // Initialize Firebase and get token
+    var config = {
+        apiKey: "AIzaSyCSn3EiT3BZ-GXYq_uxvU-dFxx2C_rrW5I",
+        authDomain: "gapropro-b0e07.firebaseapp.com",
+        databaseURL: "https://gapropro-b0e07.firebaseio.com",
+        projectId: "gapropro-b0e07",
+        storageBucket: "gapropro-b0e07.appspot.com",
+        messagingSenderId: "990522297808"
+    };
+    firebase.initializeApp(config);
+    const messaging = firebase.messaging();
+    //messaging.requestPermission();
+    var token = messaging.getToken();
+</script>
+<script>
+    var app = angular.module("driverChat", []);
+    app.controller("chatController", function ($scope, $http) {
+        $scope.myId = 1;
+        $scope.targetId = 2;
+        $scope.message = [];
+
+        // TODO : Change firstId to parameter ID and secondId to driver ID
+        $http.post("http://localhost:3000/chat/get_chat_log", {
+            "firstId": $scope.myId,
+            "secondId": $scope.targetId
+        }).then(function (response) {
+            $scope.message = response.data.result;
+        });
+    });
+
+</script>
 </body>
 </html>
