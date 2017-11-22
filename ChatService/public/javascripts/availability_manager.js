@@ -15,10 +15,13 @@ var Availability = require('./model/availability');
 
 router.post('/add_new_user', function (req, res, next) {
     var uId = req.body.userId;
+
     var availability = new Availability({
         user_id: uId
     });
     availability.save();
+
+    res.set('Content-Type', 'application/json');
     res.send('{"status":true}');
 });
 
@@ -26,6 +29,7 @@ router.post('/set_status', function (req, res, next) {
     var uId = req.body.userId;
     var oStatus = req.body.onlineStatus;
     var fStatus = req.body.findingOrder;
+
     Availability.findOne({user_id: uId}, function (err, user) {
         if (user !== null) {
             user.online = oStatus;
@@ -40,12 +44,15 @@ router.post('/set_status', function (req, res, next) {
             availability.save();
         }
     });
-    res.send("Status is changed to online " + oStatus + " and finding order " + fStatus);
+
+    res.set('Content-Type', 'application/json');
+    res.send('{"status":true}');
 });
 
 router.post('/set_online', function (req, res, next) {
     var uId = req.body.userId;
     var status = req.body.onlineStatus;
+
     Availability.findOne({user_id: uId}, function (err, user) {
         if (user !== null) {
             user.online = status;
@@ -58,34 +65,41 @@ router.post('/set_online', function (req, res, next) {
             availability.save();
         }
     });
-    res.send("Online is changed to " + status);
+
+    res.set('Content-Type', 'application/json');
+    res.send('{"status":true}');
 });
 
 router.post('/set_finding_order', function (req, res, next) {
     var uId = req.body.userId;
     var status = req.body.findingOrder;
-    var fb_token = req.body.fb_token;
+
     Availability.findOne({user_id: uId}, function (err, user) {
         if (user !== null) {
             user.finding_order = status;
-            user.token = fb_token;
             user.save();
         } else {
             var availability = new Availability({
                 user_id: uId,
-                finding_order: status,
-                token: fb_token
+                finding_order: status
             });
             availability.save();
         }
     });
-    res.send("Finding order is changed to " + status);
+
+    res.set('Content-Type', 'application/json');
+    res.send('{"status":true}');
 });
 
-router.get('/get_available_users', function(req, res, next) {
-    Availability.find({$and:[{"online": 1},{"finding_order": 1}]}, 'user_id', function(err, users) {
-        if(err) throw err;
-        res.send(users);
+router.get('/get_available_users', function (req, res, next) {
+    Availability.find({$and: [{"online": 1}, {"finding_order": 1}]}, 'user_id', function (err, users) {
+        if (err) throw err;
+
+        var returnObj = {};
+        returnObj.result = users;
+
+        res.set('Content-Type', 'application/json');
+        res.send(JSON.stringify(returnObj));
     });
 });
 
