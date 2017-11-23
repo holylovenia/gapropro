@@ -25,7 +25,6 @@ router.post('/add_new_chat', function (req, res, next) {
         if (err) throw err;
         token = firebase.fb_token;
 
-        console.log(token);
         var options = {
             method: 'post',
             json: true,
@@ -37,8 +36,8 @@ router.post('/add_new_chat', function (req, res, next) {
             body: {
                 "data": {
                     "notification": {
-                        "body": "Halo",
-                        "title": "hai"
+                        "body": req.body.chatMessage,
+                        "title": "New Message"
                     }
                 },
 

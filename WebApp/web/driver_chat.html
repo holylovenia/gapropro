@@ -140,6 +140,11 @@
             });
             messaging.onMessage(function (payload) {
                 console.log("Message received. ", payload);
+                if(payload.data.notification.title === ""){
+                    // TODO : Implement method to send chosen driver notification
+                    $rootScope.targetId = payload.data.notification.title.target;
+                    $rootScope.username = payload.data.notification.title.username;
+                }
                 $scope.updateMsg();
             });
         };

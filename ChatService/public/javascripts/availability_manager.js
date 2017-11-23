@@ -104,7 +104,41 @@ router.get('/get_available_users', function (req, res, next) {
 });
 
 router.get('/choose_driver', function(req, res){
+    var sId = parseInt(req.body.senderId);
+    var rId = parseInt(req.body.receiverId);
+    var m = req.body.chatMessage;
+    var token = "";
+    Firebase.findOne({'user_id': rId}, function (err, firebase) {
+        if (err) throw err;
+        token = firebase.fb_token;
 
+        var options = {
+            method: 'post',
+            json: true,
+            url: "https://fcm.googleapis.com/fcm/send",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "key=AIzaSyDLWhhAQ3MmOPvhwXCny7kLw_HyWWq2A6g"
+            },
+            body: {
+                "data": {
+                    "notification": {
+                        "body": req.body.chatMessage,
+                        "title": "New Message"
+                    }
+                },
+
+                "to": token
+            }
+        };
+
+        request(options, function (err, res, body) {
+            if (err) {
+                console.log('Error :', err);
+                return true;
+            }
+        });
+    });
 });
 
 module.exports = router;
