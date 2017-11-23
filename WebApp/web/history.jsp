@@ -1,13 +1,8 @@
 <%@ page import="com.shampoo.webapp.controller.TransactionUserServlet" %>
 <%@ page import="com.shampoo.webapp.model.TransactionBean" %>
 <%@ page import="java.text.SimpleDateFormat" %>
-<%@ page import="java.text.ParseException" %><%--
-  Created by IntelliJ IDEA.
-  User: verenaseverina
-  Date: 11/2/17
-  Time: 5:31 PM
-  To change this template use File | Settings | File Templates.
---%>
+<%@ page import="java.text.ParseException" %>
+
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <jsp:useBean id="userData" class="com.shampoo.webapp.model.UserBean" scope="session" />
 <jsp:useBean id="transactionUserData" class="com.shampoo.webapp.model.TransactionUserBean" scope="session" />
@@ -18,7 +13,7 @@
     <link rel="stylesheet" type="text/css" href="styles/history.css">
 </head>
 <body>
-<div class="container">
+<div class="container-wide">
     <div class="nav-top">
         <div class="logo">
             <p class="projek">
@@ -39,8 +34,14 @@
     </div>
     <div class="nav-bot">
         <div class="section" id="section-order">
-            <a href="order.jsp" class="section-name" id="order">
-                ORDER
+            <% if (userData.getDriverStatus()==1) {
+                out.print("<a href=\"driverchat.jsp\")");
+            } else {
+                out.print("<a href=\"order.jsp\")");
+            }
+            %>
+            class="section-name" id="order">
+            ORDER
             </a>
         </div>
         <div class="section" id="section-history">

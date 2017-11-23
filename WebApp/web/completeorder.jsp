@@ -1,12 +1,6 @@
 <%@ page import="com.shampoo.webapp.model.OrderBean" %>
 <%@ page import="com.shampoo.webapp.model.DriverBean" %>
-<%--
-  Created by IntelliJ IDEA.
-  User: verenaseverina
-  Date: 11/2/17
-  Time: 6:19 PM
-  To change this template use File | Settings | File Templates.
---%>
+
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <jsp:useBean id="userData" class="com.shampoo.webapp.model.UserBean" scope="session" />
 <jsp:useBean id="orderData" class="com.shampoo.webapp.model.OrderBean" scope="session" />
@@ -17,7 +11,7 @@
     <link rel="stylesheet" type="text/css" href="styles/order.css">
 </head>
 <body>
-<div class="container">
+<div class="container-wide">
     <div class="nav-top">
         <div class="logo">
             <p class="projek">
@@ -76,9 +70,18 @@
                 </div>
             </div>
 
-            <div class="order-section order-section-3 order-section-active">
+            <div class="order-section order-section-3">
                 <div class="order-section-circle">
                     <p> 3 </p>
+                </div>
+                <div class="order-section-text">
+                    Chat Driver
+                </div>
+            </div>
+
+            <div class="order-section order-section-4 order-section-active">
+                <div class="order-section-circle">
+                    <p> 4 </p>
                 </div>
                 <div class="order-section-text">
                     Complete your Order

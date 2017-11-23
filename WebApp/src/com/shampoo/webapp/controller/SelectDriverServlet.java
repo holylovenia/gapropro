@@ -16,7 +16,7 @@ public class SelectDriverServlet extends HttpServlet {
         OrderBean orderBean = (OrderBean) request.getSession().getAttribute("orderData");
         orderBean.setDriverId(chosenDriverId);
 
-        response.sendRedirect("completeorder.jsp");
+        response.sendRedirect("userchat.jsp");
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

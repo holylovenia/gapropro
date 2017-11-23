@@ -1,10 +1,3 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: verenaseverina
-  Date: 11/2/17
-  Time: 5:26 PM
-  To change this template use File | Settings | File Templates.
---%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <jsp:useBean id="userData" class="com.shampoo.webapp.model.UserBean" scope="session" />
 <% if (userData.getUserID() == null) { response.sendRedirect("login.jsp"); } else {%>
@@ -15,7 +8,7 @@
     <script src="js/handler.js"></script>
 </head>
 <body>
-<div class="container">
+<div class="container-wide">
     <div class="nav-top">
         <div class="logo">
             <p class="projek">
@@ -77,6 +70,15 @@
             <div class="order-section order-section-3">
                 <div class="order-section-circle">
                     <p> 3 </p>
+                </div>
+                <div class="order-section-text">
+                    Chat Driver
+                </div>
+            </div>
+
+            <div class="order-section order-section-4">
+                <div class="order-section-circle">
+                    <p> 4 </p>
                 </div>
                 <div class="order-section-text">
                     Complete your Order

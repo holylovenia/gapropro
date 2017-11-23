@@ -1,8 +1,11 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<jsp:useBean id="userData" class="com.shampoo.webapp.model.UserBean" scope="session" />
+
+<% if (userData.getUserID() == null) response.sendRedirect("login.jsp");%>
 <html>
 <head>
     <title>Order</title>
     <link rel="stylesheet" type="text/css" href="styles/order.css">
-    <link rel="manifest" href="etc/manifest.json">
     <script src="js/handler.js"></script>
 </head>
 <body>
@@ -18,7 +21,7 @@
         </div>
         <div class="profile-link">
             <p>
-                <span>Hi, </span> Budi
+                <span>Hi, </span> <% out.print("<b>" + userData.getUsername() + "</b>!");%>
             </p>
             <p>
                 <a href="handleLogout.jsp" class="logout">Logout</a>
@@ -27,8 +30,14 @@
     </div>
     <div class="nav-bot">
         <div class="section" id="section-order">
-            <a href="order.jsp" class="section-name" id="order">
-                ORDER
+            <% if (userData.getDriverStatus()==1) {
+                out.print("<a href=\"driverchat.jsp\")");
+            } else {
+                out.print("<a href=\"order.jsp\")");
+            }
+            %>
+            class="section-name" id="order">
+            ORDER
             </a>
         </div>
         <div class="section" id="section-history">
@@ -42,49 +51,22 @@
             </a>
         </div>
     </div>
-    <div class="order-body" ng-app="userChat">
-        <h2 class="order-header">
-            MAKE AN ORDER
-        </h2>
-        <div class="order-nav-bar">
-            <div class="order-section order-section-1 order-section-active">
-                <div class="order-section-circle">
-                    <p> 1 </p>
-                </div>
-                <div class="order-section-text">
-                    Select Destination
-                </div>
-            </div>
+    <div class="order-body" ng-app="driverChat">
+        <h1 class="order-header">
+            LOOKING FOR AN ORDER
+        </h1>
+        <div class="order-status" ng-controller="orderController">
+            <button type="button" class="find-order" ng-show="!finding_order" ng-click="findOrder()">
+                Find Order
+            </button>
 
-            <div class="order-section order-section-2">
-                <div class="order-section-circle">
-                    <p> 2 </p>
-                </div>
-                <div class="order-section-text">
-                    Select a Driver
-                </div>
-            </div>
-
-            <div class="order-section order-section-3">
-                <div class="order-section-circle">
-                    <p> 3 </p>
-                </div>
-                <div class="order-section-text">
-                    Chat Driver
-                </div>
-            </div>
-
-            <div class="order-section order-section-3">
-                <div class="order-section-circle">
-                    <p> 4 </p>
-                </div>
-                <div class="order-section-text">
-                    Complete your Order
-                </div>
-            </div>
-
+            <div class="status" ng-show="finding_order">Finding Order</div>
+            <div class="chat-username" ng-show="finding_order">LaLaLand</div>
+            <button type="button" class="cancel" ng-show="finding_order" ng-click="cancelFindOrder()">
+                Cancel
+            </button>
         </div>
-        <div class="order-form">
+        <div class="order-form" ng-show="true">
             <div class="chat-box" ng-controller="chatController">
                 <div class="chat-message">
                     <div class="message-wrapper" ng-repeat="x in message"
@@ -93,7 +75,7 @@
                     </div>
                 </div>
                 <div class="chat-input">
-                    <input type="text" class="chat-input-message" ng-model="input" ng-keyup="sendMsgEnter($event)">
+                    <input type="text" class="chat-input-message" ng-keyup="sendMsgEnter($event)" ng-model="input">
                     <button type="button" class="chat-input-button" ng-click="sendMsg()">Kirim</button>
                 </div>
             </div>
@@ -106,13 +88,37 @@
 <script src="https://www.gstatic.com/firebasejs/4.6.2/firebase.js"></script>
 <script src="https://www.gstatic.com/firebasejs/4.6.2/firebase-messaging.js"></script>
 <script>
-    var app = angular.module("userChat", []);
+    var app = angular.module("driverChat", []);
+    /**
+     * Order Controller
+     * Mengatur setting pengambilan order
+     */
+    app.controller("orderController", function ($scope, $http, $rootScope) {
+        $rootScope.finding_order = false;
+        $rootScope.order_found = false;
+        $scope.findOrder = function () {
+            $rootScope.finding_order = true;
+            $http.post("http://localhost:3000/availability/set_finding_order", {
+                "userId": $rootScope.myId,
+                "findingOrder": 1
+            })
+        };
+        $scope.cancelFindOrder = function () {
+            $rootScope.finding_order = false;
+            $http.post("http://localhost:3000/availability/set_finding_order", {
+                "userId": $rootScope.myId,
+                "findingOrder": 0
+            })
+        }
+    });
 
+    /**
+     * Chat Controller
+     * Mengatur pengiriman dan penerimaan pesan, serta mengambil history
+     */
     app.controller("chatController", function ($scope, $http, $rootScope) {
-        // Scope Declaration
-        // TODO : Change firstId to parameter ID and secondId to driver ID
-        $rootScope.myId = 1;
-        $rootScope.targetId = 2;
+        $rootScope.myId = <%=userData.getUserID()%>;
+        $rootScope.targetId = 1;
         $scope.tokenSet = false;
         $scope.message = [];
         $scope.input = "";
@@ -137,13 +143,18 @@
                         "firebaseToken": currentToken
                     });
                     $scope.tokenSet = true;
-                    console.log(currentToken);
                 } else {
                     console.log('No Instance ID token available. Request permission to generate one.');
                 }
             });
             messaging.onMessage(function (payload) {
                 console.log("Message received. ", payload);
+                if(payload.data.notification.title === ""){
+                    // TODO : Implement method to send chosen driver notification
+
+                    $rootScope.targetId = payload.data.notification.title.target;
+                    $rootScope.username = payload.data.notification.title.username;
+                }
                 $scope.updateMsg();
             });
         };
@@ -177,7 +188,7 @@
                     $scope.updateMsg();
                 });
             }
-            $scope.message.push(message);
+            //$scope.message.push(message);
             $scope.input = "";
         };
         $scope.sendMsgEnter = function (event) {
@@ -185,7 +196,6 @@
                 $scope.sendMsg();
             }
         };
-
         // Scripts to run
         $scope.updateMsg();
         $scope.setupFirebase();

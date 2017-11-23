@@ -12,15 +12,10 @@
 <%@ page import="org.apache.http.client.ClientProtocolException" %>
 <%@ page import="java.io.IOException" %>
 <jsp:useBean id="userData" class="com.shampoo.webapp.model.UserBean" scope="session" />
-<% if (userData.getUserID() == null) { response.sendRedirect("login.jsp"); } else {%>
-<%--
-  Created by IntelliJ IDEA.
-  User: verenaseverina
-  Date: 11/3/17
-  Time: 7:29 PM
-  To change this template use File | Settings | File Templates.
---%>
-<%
+
+<%  if (userData.getUserID() == null) {
+        response.sendRedirect("login.jsp");
+    }
     HttpClient httpClient = new DefaultHttpClient();
     HttpPost httpPost = new HttpPost("http://localhost:9001/logout");
 
@@ -54,4 +49,3 @@
 
     response.sendRedirect("login.jsp");
 %>
-<% } %>
