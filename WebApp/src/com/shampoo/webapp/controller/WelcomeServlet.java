@@ -15,16 +15,20 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Base64;
 
 @WebServlet(name = "WelcomeServlet")
 public class WelcomeServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String access_token = new CookieHandler().getAccessTokenCookie(request);
-        UserBean userBean = new UserBean();
-        if (access_token != null) {
+        String token_encoded = new CookieHandler().getAccessTokenCookie(request);
+        if (token_encoded != null) {
+            byte[] token_byte = Base64.getDecoder().decode(token_encoded);
+            String access_token = new String(token_byte);
+            UserBean userBean = new UserBean();
             try {
                 UserManagementClient userManagementClient = new UserManagementClient();
-                String currentUserData = userManagementClient.getUserManagement().getCurrentUserData(new CookieHandler().getAccessTokenCookie(request));
+                String token = new String(token_byte);
+                String currentUserData = userManagementClient.getUserManagement().getCurrentUserData(token);
                 if (currentUserData.equals("expired") || currentUserData.equals("invalid") || currentUserData.equals("Error") ||
                         currentUserData.equals("invalid_ip") || currentUserData.equals("invalid_agent") || currentUserData.equals("invalid_malformed")) {
                     response.sendRedirect("login.jsp");

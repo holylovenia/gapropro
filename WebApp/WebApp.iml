@@ -28,5 +28,9 @@
     <orderEntry type="library" name="org.apache.httpcomponents:httpclient:4.2.4" level="project" />
     <orderEntry type="library" name="com.liferay.org.apache.commons.fileupload:com.liferay.org.apache.commons.fileupload:6.2.0.1" level="project" />
     <orderEntry type="library" name="org.apache.directory.studio:org.apache.commons.io:2.4" level="project" />
+    <orderEntry type="library" name="jquery" level="application" />
+    <orderEntry type="library" name="angular" level="application" />
+    <orderEntry type="library" name="firebase-messaging" level="application" />
+    <orderEntry type="library" name="firebase" level="application" />
   </component>
 </module>

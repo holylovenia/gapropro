@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Base64;
 
 @WebServlet(name = "TransactionDriverServlet")
 public class TransactionDriverServlet extends HttpServlet {
@@ -26,7 +27,10 @@ public class TransactionDriverServlet extends HttpServlet {
 
         try {
             TransactionClient transactionClient = new TransactionClient();
-            String result = transactionClient.getTransaction().getVisibleDriverTransactions(new CookieHandler().getAccessTokenCookie(request));
+            String token_encoded = new CookieHandler().getAccessTokenCookie(request);
+            byte[] token_byte = Base64.getDecoder().decode(token_encoded);
+            String token = new String(token_byte);
+            String result = transactionClient.getTransaction().getVisibleDriverTransactions(token);
             switch (result) {
                 case "invalid":
                 case "expired":

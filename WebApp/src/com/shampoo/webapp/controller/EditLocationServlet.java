@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Base64;
 
 @WebServlet(name = "EditLocationServlet")
 public class EditLocationServlet extends HttpServlet {
@@ -22,7 +23,10 @@ public class EditLocationServlet extends HttpServlet {
             PreferredLocationClient preferredLocationClient = null;
             try {
                 preferredLocationClient = new PreferredLocationClient();
-                String result = preferredLocationClient.getPreferredLocation().editPreferredLocation(new CookieHandler().getAccessTokenCookie(request), oldLocation, newLocation);
+                String token_encoded = new CookieHandler().getAccessTokenCookie(request);
+                byte[] token_byte = Base64.getDecoder().decode(token_encoded);
+                String token = new String(token_byte);
+                String result = preferredLocationClient.getPreferredLocation().editPreferredLocation(token, oldLocation, newLocation);
                 switch (result) {
                     case "Successful":
                         UserBean userData = (UserBean) request.getSession().getAttribute("userData");

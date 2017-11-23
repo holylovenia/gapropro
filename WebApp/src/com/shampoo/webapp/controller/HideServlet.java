@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Base64;
 
 @WebServlet(name = "HideServlet")
 public class HideServlet extends HttpServlet {
@@ -19,7 +20,10 @@ public class HideServlet extends HttpServlet {
         try {
             TransactionClient transactionClient = new TransactionClient();
             if (request.getParameter("driverhistory") != null) {
-                String resp = transactionClient.getTransaction().hideFromDriver(new CookieHandler().getAccessTokenCookie(request), hideID);
+                String token_encoded = new CookieHandler().getAccessTokenCookie(request);
+                byte[] token_byte = Base64.getDecoder().decode(token_encoded);
+                String token = new String(token_byte);
+                String resp = transactionClient.getTransaction().hideFromDriver(token, hideID);
                 switch (resp) {
                     case "Error":
                         response.getOutputStream().println("<script type=\"text/javascript\">");
@@ -57,7 +61,10 @@ public class HideServlet extends HttpServlet {
                         break;
                 }
             } else {
-                String resp = transactionClient.getTransaction().hideFromUser(new CookieHandler().getAccessTokenCookie(request), hideID);
+                String token_encoded = new CookieHandler().getAccessTokenCookie(request);
+                byte[] token_byte = Base64.getDecoder().decode(token_encoded);
+                String token = new String(token_byte);
+                String resp = transactionClient.getTransaction().hideFromUser(token, hideID);
                 switch (resp) {
                     case "Error":
                         response.getOutputStream().println("<script type=\"text/javascript\">");

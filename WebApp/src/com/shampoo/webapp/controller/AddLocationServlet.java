@@ -23,7 +23,10 @@ public class AddLocationServlet extends HttpServlet {
         if (newLocation != null) {
             try {
                 PreferredLocationClient preferredLocationClient = new PreferredLocationClient();
-                String result = preferredLocationClient.getPreferredLocation().addPreferredLocation(new CookieHandler().getAccessTokenCookie(request), newLocation);
+                String token_encoded = new CookieHandler().getAccessTokenCookie(request);
+                byte[] token_byte = Base64.getDecoder().decode(token_encoded);
+                String token = new String(token_byte);
+                String result = preferredLocationClient.getPreferredLocation().addPreferredLocation(token, newLocation);
                 switch (result) {
                     case "Successful":
                         UserBean userData = (UserBean) request.getSession().getAttribute("userData");

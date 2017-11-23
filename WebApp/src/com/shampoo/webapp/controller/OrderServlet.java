@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Base64;
 
 @WebServlet(name = "OrderServlet")
 public class OrderServlet extends HttpServlet {
@@ -33,7 +34,10 @@ public class OrderServlet extends HttpServlet {
 
             try {
                 OrderClient orderClient = new OrderClient();
-                String driversRawJson = orderClient.getOrder().getDrivers(cookieHandler.getAccessTokenCookie(request), preferredDriverName, pickingPoint, destination);
+                String token_encoded = cookieHandler.getAccessTokenCookie(request);
+                byte[] token_byte = Base64.getDecoder().decode(token_encoded);
+                String token = new String(token_byte);
+                String driversRawJson = orderClient.getOrder().getDrivers(token, preferredDriverName, pickingPoint, destination);
                 switch (driversRawJson) {
                     case "invalid":
                     case "expired":

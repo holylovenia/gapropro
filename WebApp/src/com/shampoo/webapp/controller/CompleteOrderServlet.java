@@ -22,14 +22,17 @@ public class CompleteOrderServlet extends HttpServlet {
             ratingSubmitted = Integer.parseInt(request.getParameter("rating"));
         }
         String commentSubmitted = request.getParameter("comment");
-
+        String token_encoded = new CookieHandler().getAccessTokenCookie(request);
+        byte[] token_byte = Base64.getDecoder().decode(token_encoded);
+        String token = new String(token_byte);
         OrderBean orderBean = (OrderBean) request.getSession().getAttribute("orderData");
         orderBean.setRating(ratingSubmitted);
         orderBean.setComment(commentSubmitted);
 
         try {
             OrderClient orderClient = new OrderClient();
-            String result = orderClient.getOrder().order(new CookieHandler().getAccessTokenCookie(request), orderBean.getDriverId(), orderBean.getPickingPoint(), orderBean.getDestination(), orderBean.getComment(), orderBean.getRating());
+
+            String result = orderClient.getOrder().order(token, orderBean.getDriverId(), orderBean.getPickingPoint(), orderBean.getDestination(), orderBean.getComment(), orderBean.getRating());
             switch (result) {
                 case "Successful":
                     response.sendRedirect("/transactionuser");

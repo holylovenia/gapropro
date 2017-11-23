@@ -52,7 +52,8 @@ public class LoginServlet extends HttpServlet {
                 access_token_JSON = new JSONObject(access_token);
                 if (!access_token_JSON.has("error")) {
                     String token = access_token_JSON.getString("access_token");
-                    Cookie access_token_cookie = new Cookie("access_token", token);
+                    String token_encoded = Base64.getEncoder().encodeToString(token.getBytes());
+                    Cookie access_token_cookie = new Cookie("access_token", token_encoded);
                     Cookie expiry_time_cookie = new Cookie("expiry_time", Integer.toString(access_token_JSON.getInt("expiry_time")));
 
                     response.addCookie(access_token_cookie);

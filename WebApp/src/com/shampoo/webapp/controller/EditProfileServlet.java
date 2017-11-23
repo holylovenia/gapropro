@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Base64;
 import java.util.List;
 
 @WebServlet(name = "EditProfileServlet")
@@ -83,8 +84,10 @@ public class EditProfileServlet extends HttpServlet {
                 response.sendRedirect("editprofile.jsp");
             } else {
                 UserManagementClient userManagementClient = new UserManagementClient();
-                String access_token = (cookieHandler.getAccessTokenCookie(request));
-                if (access_token != null) {
+                String token_encoded = cookieHandler.getAccessTokenCookie(request);
+                if (token_encoded != null) {
+                    byte[] token_byte = Base64.getDecoder().decode(token_encoded);
+                    String access_token = new String(token_byte);
                     String result = userManagementClient.getUserManagement().changeCurrentUserData(access_token, newName, newPhone, newProfilePicName, newStatusDriver);
                     switch (result) {
                         case "Successful":

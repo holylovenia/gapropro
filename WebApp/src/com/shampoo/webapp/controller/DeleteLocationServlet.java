@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Base64;
 
 @WebServlet(name = "DeleteLocationServlet")
 public class DeleteLocationServlet extends HttpServlet {
@@ -21,7 +22,10 @@ public class DeleteLocationServlet extends HttpServlet {
             PreferredLocationClient preferredLocationClient = null;
             try {
                 preferredLocationClient = new PreferredLocationClient();
-                String result = preferredLocationClient.getPreferredLocation().removePreferredLocation(new CookieHandler().getAccessTokenCookie(request), location);
+                String token_encoded = new CookieHandler().getAccessTokenCookie(request);
+                byte[] token_byte = Base64.getDecoder().decode(token_encoded);
+                String token = new String(token_byte);
+                String result = preferredLocationClient.getPreferredLocation().removePreferredLocation(token, location);
                 switch (result) {
                     case "Successful":
                         UserBean userData = (UserBean) request.getSession().getAttribute("userData");

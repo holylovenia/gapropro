@@ -188,7 +188,7 @@ public class DatabaseManager {
     }
 
     public float getRating(int driverId) throws SQLException {
-        String query = "SELECT AVG(rating) AS rating_number FROM transactions WHERE driver_id=" + driverId;
+        String query = "SELECT AVG(rating) AS rating_number FROM transactions WHERE driver_id=?";
         PreparedStatement preparedStatement = connection.prepareStatement(query);
         preparedStatement.setInt(1, driverId);
         ResultSet resultSet = preparedStatement.executeQuery();

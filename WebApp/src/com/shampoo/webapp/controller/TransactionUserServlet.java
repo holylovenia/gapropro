@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Base64;
 
 @WebServlet(name = "TransactionUserServlet")
 public class TransactionUserServlet extends HttpServlet {
@@ -25,7 +26,10 @@ public class TransactionUserServlet extends HttpServlet {
 
         try {
             TransactionClient transactionClient = new TransactionClient();
-            String result = transactionClient.getTransaction().getVisibleUserTransactions(new CookieHandler().getAccessTokenCookie(request));
+            String token_encoded = new CookieHandler().getAccessTokenCookie(request);
+            byte[] token_byte = Base64.getDecoder().decode(token_encoded);
+            String token = new String(token_byte);
+            String result = transactionClient.getTransaction().getVisibleUserTransactions(token);
             System.out.println("TransactionUser " + result);
             if (result.equals("invalid") || result.equals("expired")) {
                 response.getOutputStream().println("<script type=\"text/javascript\">");
