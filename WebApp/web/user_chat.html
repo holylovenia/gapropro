@@ -135,15 +135,16 @@
                     $http.post("http://localhost:3000/firebase/set_token", {
                         "userId": $rootScope.myId,
                         "firebaseToken": currentToken
-                    })
+                    });
                     $scope.tokenSet = true;
+                    console.log(currentToken);
                 } else {
                     console.log('No Instance ID token available. Request permission to generate one.');
                 }
             });
             messaging.onMessage(function (payload) {
                 console.log("Message received. ", payload);
-                updateMsg();
+                $scope.updateMsg();
             });
         };
         /**

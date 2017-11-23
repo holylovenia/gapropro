@@ -140,6 +140,7 @@
             });
             messaging.onMessage(function (payload) {
                 console.log("Message received. ", payload);
+                $scope.updateMsg();
             });
         };
         /**
@@ -172,7 +173,7 @@
                     $scope.updateMsg();
                 });
             }
-            $scope.message.push(message);
+            //$scope.message.push(message);
             $scope.input = "";
         };
         $scope.sendMsgEnter = function (event) {
