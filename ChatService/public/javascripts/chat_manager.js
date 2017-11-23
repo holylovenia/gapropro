@@ -13,19 +13,44 @@ router.use(bodyParser());
 
 var databaseManager = require('./model/mongo_manager');
 var Chat = require('./model/chat');
+var Firebase = require('./model/firebase');
 
 router.post('/add_new_chat', function (req, res, next) {
     var sId = parseInt(req.body.senderId);
     var rId = parseInt(req.body.receiverId);
     var m = req.body.chatMessage;
 
-    // If sending succeeds, save to mongo
-    var chat = new Chat({
-        sender_id: sId,
-        receiver_id: rId,
-        message: m
+    var token = Firebase.findOne({'user_id': rId}, function (err, firebase) {
+       if (err) throw err;
     });
-    chat.save();
+
+    var options = {
+        method: 'post',
+        json: true,
+        url: "https://fcm.googleapis.com/fcm/send",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization:": "key=AAAA5p-6zdA:APA91bFLGzZ2w0jSjpU_g3BQ18vV6XQenkolJUYa1EnjtABldwvl82vMq_SBYJw8Jw6zL8PeubIDaDCjhFqmSTNkDqkLboWuVQEQodLYq3v5B8JLubWiu8d2mOEeRZRK5NwhocUeaMvA"
+        },
+        body: {
+            "data": "INCOMING",
+            "to": token
+        }
+    };
+
+    request(options, function (err, res, body) {
+        if (err) {
+            console.log('Error :', err);
+            return
+        }
+        console.log(' Body :', body);
+        var chat = new Chat({
+            sender_id: sId,
+            receiver_id: rId,
+            message: m
+        });
+        chat.save();
+    });
 
     res.set('Content-Type', 'application/json');
     res.send('{"status":true}');
