@@ -117,7 +117,6 @@
 <script src="https://www.gstatic.com/firebasejs/4.6.2/firebase-messaging.js"></script>
 <script>
     var app = angular.module("userChat", []);
-
     app.controller("chatController", function ($scope, $http, $rootScope) {
         // Scope Declaration
         $rootScope.myId = <%=userData.getUserID()%>;
@@ -200,8 +199,20 @@
             }
         };
 
+        /**
+         * Choose driver
+         */
+        $scope.selectDriver = function () {
+            $http.post("http://localhost:3000/availability/choose_driver", {
+                "username": <%=userData.getUsername()%>,
+                "senderId": $rootScope.myId,
+                "receiverId": $rootScope.targetId
+            });
+        };
+
         // Scripts to run
         $scope.updateMsg();
+        $scope.selectDriver();
         $scope.setupFirebase();
     });
 

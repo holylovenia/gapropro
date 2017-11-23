@@ -122,6 +122,7 @@
         $scope.tokenSet = false;
         $scope.message = [];
         $scope.input = "";
+
         $scope.setupFirebase = function () {
             // Initialize Firebase and get token
             var config = {
@@ -149,11 +150,16 @@
             });
             messaging.onMessage(function (payload) {
                 console.log("Message received. ", payload);
-                if(payload.data.notification.title === ""){
-                    // TODO : Implement method to send chosen driver notification
-
+                if(payload.data.notification.type === "connect"){
                     $rootScope.targetId = payload.data.notification.title.target;
                     $rootScope.username = payload.data.notification.title.username;
+                }
+                else if(payload.data.notification.type === "close"){
+                    $rootScope.finding_order = false;
+                    $http.post("http://localhost:3000/availability/set_finding_order", {
+                        "userId": $rootScope.myId,
+                        "findingOrder": 0
+                    })
                 }
                 $scope.updateMsg();
             });

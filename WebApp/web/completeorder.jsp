@@ -4,7 +4,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <jsp:useBean id="userData" class="com.shampoo.webapp.model.UserBean" scope="session" />
 <jsp:useBean id="orderData" class="com.shampoo.webapp.model.OrderBean" scope="session" />
-<% if (userData.getUserID() == null) { response.sendRedirect("login.jsp"); } else {%>
+<% if (userData.getUserID() == null) response.sendRedirect("login.jsp");%>
 <html>
 <head>
     <title>Complete Order</title>
@@ -137,6 +137,8 @@
         </form>
     </div>
 </div>
+
+
+
 </body>
 </html>
-<% } %>
