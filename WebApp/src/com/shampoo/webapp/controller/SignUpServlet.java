@@ -97,7 +97,7 @@ public class SignUpServlet extends HttpServlet {
         }
     }
 
-    public String sendPost(String _name, String _username, String _email, String _password, String _confirmpassword, String _phoneNumber, String _asdriver) throws Exception {
+    private String sendPost(String _name, String _username, String _email, String _password, String _confirmpassword, String _phoneNumber, String _asdriver) throws Exception {
         HttpClient httpClient = new DefaultHttpClient();
         HttpPost httpPost = new HttpPost("http://localhost:9001/register");
 

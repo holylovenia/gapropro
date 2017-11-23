@@ -34,55 +34,63 @@ public class OrderServlet extends HttpServlet {
             try {
                 OrderClient orderClient = new OrderClient();
                 String driversRawJson = orderClient.getOrder().getDrivers(cookieHandler.getAccessTokenCookie(request), preferredDriverName, pickingPoint, destination);
-                if (driversRawJson.equals("invalid") || driversRawJson.equals("expired")) {
-                    response.getOutputStream().println("<script type=\"text/javascript\">");
-                    response.getOutputStream().println("alert(\"Your token is invalid or expired!\");");
-                    response.getOutputStream().println("window.location =\"handleLogout.jsp\"");
-                    response.getOutputStream().println("</script>");
-                } else if (driversRawJson.equals("invalid_ip")) {
-                    response.getOutputStream().println("<script type=\"text/javascript\">");
-                    response.getOutputStream().println("alert(\"Invalid ip address detected!\");");
-                    response.getOutputStream().println("window.location =\"handleLogout.jsp\"");
-                    response.getOutputStream().println("</script>");
-                } else if (driversRawJson.equals("invalid_agent")) {
-                    response.getOutputStream().println("<script type=\"text/javascript\">");
-                    response.getOutputStream().println("alert(\"Invalid user agent detected!\");");
-                    response.getOutputStream().println("window.location =\"handleLogout.jsp\"");
-                    response.getOutputStream().println("</script>");
-                } else if (driversRawJson.equals("invalid_malformed")) {
-                    response.getOutputStream().println("<script type=\"text/javascript\">");
-                    response.getOutputStream().println("alert(\"Malformed token detected!\");");
-                    response.getOutputStream().println("window.location =\"handleLogout.jsp\"");
-                    response.getOutputStream().println("</script>");
-                } else if (driversRawJson.equals("Error")) {
-                    response.getOutputStream().println("<script type=\"text/javascript\">");
-                    response.getOutputStream().println("alert(\"Failed to order!\");");
-                    response.getOutputStream().println("window.location =\"order.jsp\"");
-                    response.getOutputStream().println("</script>");
-                } else {
-                    JSONArray driversJsonArray = new JSONArray(driversRawJson);
-                    ArrayList<DriverBean> preferredDrivers = new ArrayList<>();
-                    ArrayList<DriverBean> otherDrivers = new ArrayList<>();
-                    JSONObject driverJsonObject;
-                    for (int i = 0; i < driversJsonArray.length(); i++) {
-                        DriverBean driverBean = new DriverBean();
-                        driverJsonObject = driversJsonArray.getJSONObject(i);
-                        driverBean.setDriverId(driverJsonObject.getInt("id"));
-                        driverBean.setUsername(driverJsonObject.getString("username"));
-                        driverBean.setName(driverJsonObject.getString("name"));
-                        driverBean.setProfilePicture(driverJsonObject.getString("profile_picture"));
-                        driverBean.setVotes(driverJsonObject.getInt("votes"));
-                        driverBean.setRating(driverJsonObject.getFloat("rating"));
-                        if (driverJsonObject.getInt("is_preferred") == 1) {
-                            preferredDrivers.add(driverBean);
-                        } else {
-                            otherDrivers.add(driverBean);
+                switch (driversRawJson) {
+                    case "invalid":
+                    case "expired":
+                        response.getOutputStream().println("<script type=\"text/javascript\">");
+                        response.getOutputStream().println("alert(\"Your token is invalid or expired!\");");
+                        response.getOutputStream().println("window.location =\"handleLogout.jsp\"");
+                        response.getOutputStream().println("</script>");
+                        break;
+                    case "invalid_ip":
+                        response.getOutputStream().println("<script type=\"text/javascript\">");
+                        response.getOutputStream().println("alert(\"Invalid ip address detected!\");");
+                        response.getOutputStream().println("window.location =\"handleLogout.jsp\"");
+                        response.getOutputStream().println("</script>");
+                        break;
+                    case "invalid_agent":
+                        response.getOutputStream().println("<script type=\"text/javascript\">");
+                        response.getOutputStream().println("alert(\"Invalid user agent detected!\");");
+                        response.getOutputStream().println("window.location =\"handleLogout.jsp\"");
+                        response.getOutputStream().println("</script>");
+                        break;
+                    case "invalid_malformed":
+                        response.getOutputStream().println("<script type=\"text/javascript\">");
+                        response.getOutputStream().println("alert(\"Malformed token detected!\");");
+                        response.getOutputStream().println("window.location =\"handleLogout.jsp\"");
+                        response.getOutputStream().println("</script>");
+                        break;
+                    case "Error":
+                        response.getOutputStream().println("<script type=\"text/javascript\">");
+                        response.getOutputStream().println("alert(\"Failed to order!\");");
+                        response.getOutputStream().println("window.location =\"order.jsp\"");
+                        response.getOutputStream().println("</script>");
+                        break;
+                    default:
+                        JSONArray driversJsonArray = new JSONArray(driversRawJson);
+                        ArrayList<DriverBean> preferredDrivers = new ArrayList<>();
+                        ArrayList<DriverBean> otherDrivers = new ArrayList<>();
+                        JSONObject driverJsonObject;
+                        for (int i = 0; i < driversJsonArray.length(); i++) {
+                            DriverBean driverBean = new DriverBean();
+                            driverJsonObject = driversJsonArray.getJSONObject(i);
+                            driverBean.setDriverId(driverJsonObject.getInt("id"));
+                            driverBean.setUsername(driverJsonObject.getString("username"));
+                            driverBean.setName(driverJsonObject.getString("name"));
+                            driverBean.setProfilePicture(driverJsonObject.getString("profile_picture"));
+                            driverBean.setVotes(driverJsonObject.getInt("votes"));
+                            driverBean.setRating(driverJsonObject.getFloat("rating"));
+                            if (driverJsonObject.getInt("is_preferred") == 1) {
+                                preferredDrivers.add(driverBean);
+                            } else {
+                                otherDrivers.add(driverBean);
+                            }
                         }
-                    }
-                    orderBean.setPreferredDrivers(preferredDrivers);
-                    orderBean.setOtherDrivers(otherDrivers);
-                    request.getSession().setAttribute("orderData", orderBean);
-                    response.sendRedirect("selectdriver.jsp");
+                        orderBean.setPreferredDrivers(preferredDrivers);
+                        orderBean.setOtherDrivers(otherDrivers);
+                        request.getSession().setAttribute("orderData", orderBean);
+                        response.sendRedirect("selectdriver.jsp");
+                        break;
                 }
             } catch (SQLException e) {
                 e.printStackTrace();

@@ -12,7 +12,7 @@ public class CurrentUser {
     public static final String ACTION_SUCCESS_MESSAGE = "Successful";
     public static final String ACTION_ERROR_MESSAGE = "Error";
     public static String rawJson;
-    public static TokenCheckerClient tokenCheckerClient;
+    private static TokenCheckerClient tokenCheckerClient;
     public static UserClient userClient;
 
     public CurrentUser() {

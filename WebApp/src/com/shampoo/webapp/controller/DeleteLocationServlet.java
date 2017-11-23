@@ -22,43 +22,51 @@ public class DeleteLocationServlet extends HttpServlet {
             try {
                 preferredLocationClient = new PreferredLocationClient();
                 String result = preferredLocationClient.getPreferredLocation().removePreferredLocation(new CookieHandler().getAccessTokenCookie(request), location);
-                if (result.equals("Successful")) {
-                    UserBean userData = (UserBean) request.getSession().getAttribute("userData");
-                    ArrayList<String> preferredLocation = new ArrayList<String>();
-                    preferredLocation = userData.getPreferredLocation();
-                    for (int i = 0; i < preferredLocation.size(); i++) {
-                        if (preferredLocation.get(i).equals(location)) {
-                            preferredLocation.remove(i);
-                            break;
+                switch (result) {
+                    case "Successful":
+                        UserBean userData = (UserBean) request.getSession().getAttribute("userData");
+                        ArrayList<String> preferredLocation = new ArrayList<String>();
+                        preferredLocation = userData.getPreferredLocation();
+                        for (int i = 0; i < preferredLocation.size(); i++) {
+                            if (preferredLocation.get(i).equals(location)) {
+                                preferredLocation.remove(i);
+                                break;
+                            }
                         }
-                    }
-                    userData.setPreferredLocation(preferredLocation);
-                    response.sendRedirect("editpreferredlocation.jsp");
-                } else if (result.equals("invalid") || result.equals("expired")) {
-                    response.getOutputStream().println("<script type=\"text/javascript\">");
-                    response.getOutputStream().println("alert(\"Your token is invalid or expired!\");");
-                    response.getOutputStream().println("window.location =\"handleLogout.jsp\"");
-                    response.getOutputStream().println("</script>");
-                } else if (result.equals("invalid_ip")) {
-                    response.getOutputStream().println("<script type=\"text/javascript\">");
-                    response.getOutputStream().println("alert(\"Invalid ip address detected!\");");
-                    response.getOutputStream().println("window.location =\"handleLogout.jsp\"");
-                    response.getOutputStream().println("</script>");
-                } else if (result.equals("invalid_agent")) {
-                    response.getOutputStream().println("<script type=\"text/javascript\">");
-                    response.getOutputStream().println("alert(\"Invalid user agent detected!\");");
-                    response.getOutputStream().println("window.location =\"handleLogout.jsp\"");
-                    response.getOutputStream().println("</script>");
-                } else if (result.equals("invalid_malformed")) {
-                    response.getOutputStream().println("<script type=\"text/javascript\">");
-                    response.getOutputStream().println("alert(\"Malformed token detected!\");");
-                    response.getOutputStream().println("window.location =\"handleLogout.jsp\"");
-                    response.getOutputStream().println("</script>");
-                } else {
-                    response.getOutputStream().println("<script type=\"text/javascript\">");
-                    response.getOutputStream().println("alert(\"Failed to delete preferred location!\");");
-                    response.getOutputStream().println("window.location =\"editpreferredlocation.jsp\"");
-                    response.getOutputStream().println("</script>");
+                        userData.setPreferredLocation(preferredLocation);
+                        response.sendRedirect("editpreferredlocation.jsp");
+                        break;
+                    case "invalid":
+                    case "expired":
+                        response.getOutputStream().println("<script type=\"text/javascript\">");
+                        response.getOutputStream().println("alert(\"Your token is invalid or expired!\");");
+                        response.getOutputStream().println("window.location =\"handleLogout.jsp\"");
+                        response.getOutputStream().println("</script>");
+                        break;
+                    case "invalid_ip":
+                        response.getOutputStream().println("<script type=\"text/javascript\">");
+                        response.getOutputStream().println("alert(\"Invalid ip address detected!\");");
+                        response.getOutputStream().println("window.location =\"handleLogout.jsp\"");
+                        response.getOutputStream().println("</script>");
+                        break;
+                    case "invalid_agent":
+                        response.getOutputStream().println("<script type=\"text/javascript\">");
+                        response.getOutputStream().println("alert(\"Invalid user agent detected!\");");
+                        response.getOutputStream().println("window.location =\"handleLogout.jsp\"");
+                        response.getOutputStream().println("</script>");
+                        break;
+                    case "invalid_malformed":
+                        response.getOutputStream().println("<script type=\"text/javascript\">");
+                        response.getOutputStream().println("alert(\"Malformed token detected!\");");
+                        response.getOutputStream().println("window.location =\"handleLogout.jsp\"");
+                        response.getOutputStream().println("</script>");
+                        break;
+                    default:
+                        response.getOutputStream().println("<script type=\"text/javascript\">");
+                        response.getOutputStream().println("alert(\"Failed to delete preferred location!\");");
+                        response.getOutputStream().println("window.location =\"editpreferredlocation.jsp\"");
+                        response.getOutputStream().println("</script>");
+                        break;
                 }
             } catch (SQLException e) {
                 e.printStackTrace();

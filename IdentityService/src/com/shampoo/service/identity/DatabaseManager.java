@@ -9,9 +9,9 @@ import java.util.Properties;
 
 public class DatabaseManager {
 
-    Connection connection;
-    Statement statement;
-    public static Integer expiredDelay = 1800 * 1000;
+    private Connection connection;
+    private Statement statement;
+    static Integer expiredDelay = 1800 * 1000;
 
     public DatabaseManager() throws SQLException {
         connection = getConnection();
@@ -21,7 +21,7 @@ public class DatabaseManager {
         statement = connection.createStatement();
     }
 
-    public Connection getConnection() {
+    private Connection getConnection() {
         final String username = "shampoo";
         final String password = "shampoo1gratis1";
         final String dbms = "mysql";
@@ -29,6 +29,7 @@ public class DatabaseManager {
         final String portNumber = "";
         final String databaseName = "shampoo_account";
         this.connection = null;
+
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
             Properties connectionProperties = new Properties();
@@ -45,8 +46,13 @@ public class DatabaseManager {
     //Return UserID
     public Integer login(String username, String password) {
         try {
-            String query = "SELECT * FROM users WHERE username='" + username + "' AND password='" + password + "'";
-            ResultSet resultSet = statement.executeQuery(query);
+            String query = "SELECT * FROM users WHERE username=? AND password=?";
+
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setString(1, username);
+            preparedStatement.setString(2, password);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
             if (!resultSet.next()) {
                 return null;
             } else {
@@ -63,12 +69,19 @@ public class DatabaseManager {
         try {
             Timestamp expiredTime = new Timestamp(System.currentTimeMillis() + expiredDelay);
             String access_token = new AccessToken().generateAccessToken(username, email, password) + "#" + userAgent + "#" + ipAddress;
-//            String access_token_encoded = Base64.getEncoder().encodeToString(access_token.getBytes());
-            String query = "INSERT INTO users(username, name, email, password, phone_no, profile_picture, is_driver, expired_time, access_token) VALUES("
-                    + "'" + username + "'" + ",'" + fullName + "','" + email + "','" + password + "','" + phoneNumber + "','" + profilePicture + "'," +
-                    Integer.toString(isDriver) + ",'" + expiredTime + "','" + access_token + "')";
-            System.out.println(query);
-            statement.execute(query);
+
+            String query = "INSERT INTO users(username, name, email, password, phone_no, profile_picture, is_driver, expired_time, access_token) VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
+
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setString(1, username);
+            preparedStatement.setString(2, fullName);
+            preparedStatement.setString(3, email);
+            preparedStatement.setString(4, phoneNumber);
+            preparedStatement.setString(5, profilePicture);
+            preparedStatement.setString(6, Integer.toString(isDriver));
+            preparedStatement.setTimestamp(7, expiredTime);
+            preparedStatement.setString(8, access_token);
+            preparedStatement.executeQuery();
         } catch (SQLException | NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
@@ -80,26 +93,35 @@ public class DatabaseManager {
     }
 
     public void updateAccessToken(Integer userID, String access_token) throws SQLException {
-        String updateQuery = "UPDATE users SET access_token='" + access_token + "' WHERE id=" + Integer.toString(userID);
-        System.out.println("updateAccessToken" + updateQuery);
-        statement.executeUpdate(updateQuery);
+        String updateQuery = "UPDATE users SET access_token=? WHERE id=?";
+        PreparedStatement preparedStatement = connection.prepareStatement(updateQuery);
+        preparedStatement.setString(1, access_token);
+        preparedStatement.setInt(2, userID);
+        preparedStatement.executeUpdate();
     }
 
     public void updateExpiredTime(String access_token, String userAgent, String ipAddress) {
         try {
             if (access_token  != null) {
-                String selectQuery = "SELECT * FROM users WHERE access_token LIKE '" + access_token + "'";
-                ResultSet resultSet = statement.executeQuery(selectQuery);
+                String selectQuery = "SELECT * FROM users WHERE access_token LIKE ?";
+                PreparedStatement oldPreparedStatement = connection.prepareStatement(selectQuery);
+                oldPreparedStatement.setString(1, access_token);
+                ResultSet resultSet = oldPreparedStatement.executeQuery();
                 resultSet.next();
+
                 String username = resultSet.getString("username");
                 String email = resultSet.getString("email");
                 String password = resultSet.getString("password");
                 String token = new AccessToken().generateAccessToken(username, email, password) + "#" + userAgent + "#" + ipAddress;
-//                String token_encoded = Base64.getEncoder().encodeToString(token.getBytes());
                 Timestamp newTimestamp = new Timestamp(System.currentTimeMillis() + expiredDelay);
-                String updateQuery = "UPDATE users SET access_token='" + token + "'" + ",expired_time='" + newTimestamp +
-                        "' WHERE access_token='" + access_token + "'";
-                statement.execute(updateQuery);
+
+                String updateQuery = "UPDATE users SET access_token=?, expired_time=? WHERE access_token=?";
+
+                PreparedStatement preparedStatement = connection.prepareStatement(updateQuery);
+                preparedStatement.setString(1, token);
+                preparedStatement.setTimestamp(2, newTimestamp);
+                preparedStatement.setString(3, access_token);
+                preparedStatement.executeUpdate();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -107,47 +129,45 @@ public class DatabaseManager {
     }
 
     public ResultSet fetchUserData(Integer userID) throws SQLException {
-        String selectQuery = "SELECT * FROM users WHERE id=" + userID;
-        ResultSet resultSet = statement.executeQuery(selectQuery);
-        resultSet.next();
-        return resultSet;
-    }
-
-    public ResultSet fetchTokenAndExpired(String username) throws SQLException {
-        String selectQuery = "SELECT access_token, expired_time FROM users WHERE username='" + username + "'";
-        ResultSet resultSet = statement.executeQuery(selectQuery);
+        String selectQuery = "SELECT * FROM users WHERE id=?";
+        PreparedStatement preparedStatement = connection.prepareStatement(selectQuery);
+        preparedStatement.setInt(1, userID);
+        ResultSet resultSet = preparedStatement.executeQuery();
         resultSet.next();
         return resultSet;
     }
 
     public ResultSet fetchToken(String username) throws SQLException {
-        String selectQuery = "SELECT access_token FROM users WHERE username='" + username + "'";
-        ResultSet resultSet = statement.executeQuery(selectQuery);
+        String selectQuery = "SELECT access_token FROM users WHERE username=?";
+        PreparedStatement preparedStatement = connection.prepareStatement(selectQuery);
+        preparedStatement.setString(1, username);
+        ResultSet resultSet = preparedStatement.executeQuery();
         resultSet.next();
         return resultSet;
     }
 
     public Integer invalidateToken(Integer userID) throws SQLException {
-        String token = "shampoobersihkinclongmantapkali";
         Timestamp newTimestamp = new Timestamp(System.currentTimeMillis() - 1);
-        String updateQuery = "UPDATE users SET access_token='" + token + "'" + ",expired_time='" + newTimestamp +
-                "' WHERE id=" + userID;
-        return statement.executeUpdate(updateQuery);
+        String updateQuery = "UPDATE users SET access_token=?, expired_time=? WHERE id=?";
+        PreparedStatement preparedStatement = connection.prepareStatement(updateQuery);
+        String expiredToken = "shampoobersihkinclongmantapkali";
+        preparedStatement.setString(1, expiredToken);
+        preparedStatement.setTimestamp(2, newTimestamp);
+        preparedStatement.setInt(3, userID);
+        return preparedStatement.executeUpdate();
     }
 
     public boolean validateRegister(String username, String email) throws SQLException {
-        String query = "SELECT * FROM users WHERE username='" + username + "' OR email='" + email + "'";
-        ResultSet resultSet = statement.executeQuery(query);
-        if (!resultSet.next()) {
-            return true;
-        } else {
-            return false;
-        }
+        String query = "SELECT * FROM users WHERE username=? OR email=?";
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+        preparedStatement.setString(1, username);
+        preparedStatement.setString(2, email);
+        ResultSet resultSet = preparedStatement.executeQuery();
+        return !resultSet.next();
     }
 
     public String checkAccessToken(String access_token) throws SQLException {
         String[] parts = access_token.split("#");
-        System.out.println("checkAccessToken:");
         for (String part : parts) {
             System.out.println(part);
         }
@@ -213,21 +233,29 @@ public class DatabaseManager {
     }
 
     public String fetchUserDataFromToken(String access_token) throws SQLException {
-        String query = "SELECT * FROM users WHERE access_token='" + access_token + "'";
-        System.out.println(query);
-        ResultSet resultSet = statement.executeQuery(query);
+        String query = "SELECT * FROM users WHERE access_token=?";
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+        preparedStatement.setString(1, access_token);
+        ResultSet resultSet = preparedStatement.executeQuery();
         return convertToJson(resultSet);
     }
 
     public void changeUserData(int id, String fullName, String phoneNumber, String profilePicture, int isDriver) throws SQLException {
-        String updateQuery = "UPDATE users SET name='" + fullName + "', phone_no='" + phoneNumber + "', profile_picture='" + profilePicture + "', is_driver=" + isDriver + " WHERE id=" + id;
-        statement.executeUpdate(updateQuery);
+        String updateQuery = "UPDATE users SET name=?, phone_no=?, profile_picture=?, is_driver=? WHERE id=?";
+        PreparedStatement preparedStatement = connection.prepareStatement(updateQuery);
+        preparedStatement.setString(1, fullName);
+        preparedStatement.setString(2, phoneNumber);
+        preparedStatement.setString(3, profilePicture);
+        preparedStatement.setInt(4, isDriver);
+        preparedStatement.setInt(5, id);
+        preparedStatement.executeUpdate();
     }
 
     public String fetchDriverDataExceptMe(String access_token) throws SQLException {
-        String query = "SELECT id, username, name, profile_picture FROM users WHERE access_token!='" + access_token + "' AND is_driver=" + 1;
-        System.out.println(query);
-        ResultSet resultSet = statement.executeQuery(query);
+        String query = "SELECT id, username, name, profile_picture FROM users WHERE access_token!=? AND is_driver=1";
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+        preparedStatement.setString(1, access_token);
+        ResultSet resultSet = preparedStatement.executeQuery();
         return convertToJson(resultSet);
     }
 
@@ -252,15 +280,18 @@ public class DatabaseManager {
     }
 
     public String fetchUsersData(String access_token) throws SQLException {
-        String query = "SELECT id, name, profile_picture FROM users WHERE access_token!='" + access_token + "'";
-        System.out.println(query);
-        ResultSet resultSet = statement.executeQuery(query);
+        String query = "SELECT id, name, profile_picture FROM users WHERE access_token!=?";
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+        preparedStatement.setString(1, access_token);
+        ResultSet resultSet = preparedStatement.executeQuery();
         return convertToJson(resultSet);
     }
 
     public Integer fetchUserId(String username) throws SQLException {
         String query = "SELECT id FROM users WHERE username='" + username + "'";
-        ResultSet resultSet = statement.executeQuery(query);
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+        preparedStatement.setString(1, username);
+        ResultSet resultSet = preparedStatement.executeQuery();
         resultSet.next();
         return resultSet.getInt("id");
     }

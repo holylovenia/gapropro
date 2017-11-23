@@ -58,9 +58,7 @@ public class TransactionUserServlet extends HttpServlet {
                 for (int i = 0; i < json.length(); i++) {
                     jsonObject = (JSONObject) json.get(i);
                     Integer ID = jsonObject.getInt("id");
-                    Integer userID = null;
                     Integer driverID = jsonObject.getInt("driver_id");
-                    String userName = null;
                     String driverName = jsonObject.getString("driver_name");
                     String picking_point = jsonObject.getString("picking_point");
                     String destination = jsonObject.getString("destination");
@@ -74,13 +72,12 @@ public class TransactionUserServlet extends HttpServlet {
                     }
                     String profilePicture = jsonObject.getString("driver_profile_picture");
                     Integer user_show = jsonObject.getInt("user_show");
-                    Integer driver_show = null;
 
                     TransactionBean transBean = new TransactionBean();
                     transBean.setID(ID);
-                    transBean.setUserID(userID);
+                    transBean.setUserID(null);
                     transBean.setDriverID(driverID);
-                    transBean.setUserName(userName);
+                    transBean.setUserName(null);
                     transBean.setDriverName(driverName);
                     transBean.setPickingPoint(picking_point);
                     transBean.setDestination(destination);
@@ -89,7 +86,7 @@ public class TransactionUserServlet extends HttpServlet {
                     transBean.setRating(rating);
                     transBean.setProfilePicture(profilePicture);
                     transBean.setUserShow(user_show);
-                    transBean.setDriverShow(driver_show);
+                    transBean.setDriverShow(null);
                     temp.add(transBean);
                 }
                 transactionUserBean.setTransactionUserArray(temp);

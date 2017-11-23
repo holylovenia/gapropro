@@ -8,15 +8,13 @@ import java.util.Calendar;
 import java.util.Properties;
 
 public class DatabaseManager {
-    private final static String NULL_VALUE = "NULL";
     private Connection connection;
-    private Statement statement;
 
     public DatabaseManager() {
         connection = getConnection();
     }
 
-    public Connection getConnection() {
+    private Connection getConnection() {
         final String username = "shampoo";
         final String password = "shampoo1gratis1";
         final String dbms = "mysql";
@@ -30,7 +28,6 @@ public class DatabaseManager {
             connectionProperties.put("user", username);
             connectionProperties.put("password", password);
             connection = DriverManager.getConnection("jdbc:" + dbms + "://" + serverName + ":" + portNumber + "/" + databaseName, connectionProperties);
-            statement = connection.createStatement();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -42,44 +39,66 @@ public class DatabaseManager {
     }
 
     public void addPreferredLocation(int userId, String location) throws SQLException {
-        String query = "INSERT INTO preferred_locations(id, location) VALUES (" + userId + ", '" + location + "')";
-        statement.executeUpdate(query);
+        String query = "INSERT INTO preferred_locations(id, location) VALUES (?, ?)";
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+        preparedStatement.setInt(1, userId);
+        preparedStatement.setString(2, location);
+        preparedStatement.executeUpdate();
     }
 
     public void editPreferredLocation(int userId, String previousLocation, String newLocation) throws SQLException {
-        String query = "UPDATE preferred_locations SET location='" + newLocation + "' WHERE id=" + userId + " AND location='" + previousLocation + "'";
-        statement.executeUpdate(query);
+        String query = "UPDATE preferred_locations SET location=? WHERE id=? AND location=?";
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+        preparedStatement.setString(1, newLocation);
+        preparedStatement.setInt(2, userId);
+        preparedStatement.setString(3, previousLocation);
+        preparedStatement.executeUpdate();
     }
 
     public void removePreferredLocation(int userId, String location) throws SQLException {
-        String query = "DELETE FROM preferred_locations WHERE id=" + userId + " AND location='" + location + "'";
-        statement.executeUpdate(query);
+        String query = "DELETE FROM preferred_locations WHERE id=? AND location=?";
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+        preparedStatement.setInt(1, userId);
+        preparedStatement.setString(2, location);
+        preparedStatement.executeUpdate();
     }
 
     public void order(int userId, int driverId, String pickingPoint, String destination, String comment, int rating) throws SQLException {
-        String query = "INSERT INTO transactions(user_id, driver_id, picking_point, destination, date, comment, rating) VALUES (" + userId + ", " + driverId + ", '" + pickingPoint + "', '" + destination + "', '" + new Date(Calendar.getInstance().getTimeInMillis()) + "', ";
+        String query = "INSERT INTO transactions(user_id, driver_id, picking_point, destination, date, comment, rating) VALUES (?, ?, ?, ?, ?, ?, ?)";
+
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+        preparedStatement.setInt(1, userId);
+        preparedStatement.setInt(2, driverId);
+        preparedStatement.setString(3, pickingPoint);
+        preparedStatement.setString(4, destination);
+        preparedStatement.setDate(5, new Date(Calendar.getInstance().getTimeInMillis()));
+
         if(comment == null) {
-            query += NULL_VALUE + ", ";
+            preparedStatement.setObject(6, null);
         } else {
-            query += "'" + comment + "', ";
+            preparedStatement.setString(6, comment);
         }
         if(rating == 0) {
-            query += NULL_VALUE;
+            preparedStatement.setObject(7, null);
         } else {
-            query += rating;
+            preparedStatement.setInt(7, rating);
         }
-        query += ")";
-        statement.executeUpdate(query);
+
+        preparedStatement.executeUpdate();
     }
 
     public void hideFromUser(int transactionId) throws SQLException {
-        String query = "UPDATE transactions SET user_show=0 WHERE id=" + transactionId;
-        statement.executeUpdate(query);
+        String query = "UPDATE transactions SET user_show=0 WHERE id=?";
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+        preparedStatement.setInt(1, transactionId);
+        preparedStatement.executeUpdate();
     }
 
     public void hideFromDriver(int transactionId) throws SQLException {
-        String query = "UPDATE transactions SET driver_show=0 WHERE id=" + transactionId;
-        statement.executeUpdate(query);
+        String query = "UPDATE transactions SET driver_show=0 WHERE id=?";
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+        preparedStatement.setInt(1, transactionId);
+        preparedStatement.executeUpdate();
     }
 
     private String convertToJson(ResultSet resultSet) throws SQLException {
@@ -105,66 +124,74 @@ public class DatabaseManager {
             jsonArray.put(counter, jsonObject);
             counter++;
         }
-        String returnValue = jsonArray.toString();
-        return returnValue;
+        return jsonArray.toString();
     }
 
     public String getTransaction(int transactionId) throws SQLException {
-        String query = "SELECT * FROM transactions WHERE id=" + transactionId;
-        System.out.println(query);
-        ResultSet resultSet = statement.executeQuery(query);
-        String result = convertToJson(resultSet);
-        System.out.println(result);
-        return result;
+        String query = "SELECT * FROM transactions WHERE id=?";
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+        preparedStatement.setInt(1, transactionId);
+        ResultSet resultSet = preparedStatement.executeQuery();
+        return convertToJson(resultSet);
     }
 
     public String getUserTransactions(int userId) throws SQLException {
-        String query = "SELECT * FROM transactions WHERE user_show=1 AND user_id=" + userId;
-        ResultSet resultSet = statement.executeQuery(query);
+        String query = "SELECT * FROM transactions WHERE user_show=1 AND user_id=?";
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+        preparedStatement.setInt(1, userId);
+        ResultSet resultSet = preparedStatement.executeQuery();
         return convertToJson(resultSet);
     }
 
     public String getDriverTransactions(int driverId) throws SQLException {
-        String query = "SELECT * FROM transactions WHERE driver_show=1 AND driver_id=" + driverId;
-        ResultSet resultSet = statement.executeQuery(query);
+        String query = "SELECT * FROM transactions WHERE driver_show=1 AND driver_id=?";
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+        preparedStatement.setInt(1, driverId);
+        ResultSet resultSet = preparedStatement.executeQuery();
         return convertToJson(resultSet);
     }
 
     public String getPreferredLocation(int userId, String location) throws SQLException {
-        String query = "SELECT * FROM preferred_locations WHERE id=" + userId +" AND location='" + location + "'";
-        ResultSet resultSet = statement.executeQuery(query);
+        String query = "SELECT * FROM preferred_locations WHERE id=? AND location=?";
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+        preparedStatement.setInt(1, userId);
+        preparedStatement.setString(2, location);
+        ResultSet resultSet = preparedStatement.executeQuery();
         return convertToJson(resultSet);
     }
 
     public String getUserPreferredLocations(int userId) throws SQLException {
-        String query = "SELECT * FROM preferred_locations WHERE id=" + userId;
-        ResultSet resultSet = statement.executeQuery(query);
+        String query = "SELECT * FROM preferred_locations WHERE id=?";
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+        preparedStatement.setInt(1, userId);
+        ResultSet resultSet = preparedStatement.executeQuery();
         return convertToJson(resultSet);
     }
 
     public boolean isSelectedDriver(int driverId, String pickingPoint, String destination) throws SQLException {
-        String query = "SELECT * FROM preferred_locations WHERE id=" + driverId + " AND (location='" + pickingPoint + "' OR location='" + destination + "')";
-        ResultSet resultSet = statement.executeQuery(query);
-        if(!resultSet.next()) {
-            // empty result
-            return false;
-        } else {
-            return true;
-        }
+        String query = "SELECT * FROM preferred_locations WHERE id=? AND (location=? OR location=?)";
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+        preparedStatement.setInt(1, driverId);
+        preparedStatement.setString(2, pickingPoint);
+        preparedStatement.setString(3, destination);
+        ResultSet resultSet = preparedStatement.executeQuery();
+        return resultSet.next();
     }
 
     public int getVotes(int driverId) throws SQLException {
-        String query = "SELECT COUNT(rating) AS votes FROM transactions WHERE driver_id=" + driverId;
-        System.out.println("Query " + query);
-        ResultSet resultSet = statement.executeQuery(query);
+        String query = "SELECT COUNT(rating) AS votes FROM transactions WHERE driver_id=?";
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+        preparedStatement.setInt(1, driverId);
+        ResultSet resultSet = preparedStatement.executeQuery();
         resultSet.next();
-        System.out.println("Result votes: " + resultSet.getInt("votes"));
         return resultSet.getInt("votes");
     }
 
     public float getRating(int driverId) throws SQLException {
         String query = "SELECT AVG(rating) AS rating_number FROM transactions WHERE driver_id=" + driverId;
-        ResultSet resultSet = statement.executeQuery(query);
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+        preparedStatement.setInt(1, driverId);
+        ResultSet resultSet = preparedStatement.executeQuery();
         resultSet.next();
         if(resultSet.getObject("rating_number") == null) {
             return 0;

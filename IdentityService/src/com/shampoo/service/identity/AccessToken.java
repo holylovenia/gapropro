@@ -13,10 +13,10 @@ public class AccessToken {
         m.update(temp.getBytes());
         byte[] digest = m.digest();
         BigInteger bigInt = new BigInteger(1, digest);
-        String hashText = bigInt.toString(16);
+        StringBuilder hashText = new StringBuilder(bigInt.toString(16));
         while (hashText.length() < 32) {
-            hashText = '0' + hashText;
+            hashText.insert(0, '0');
         }
-        return hashText;
+        return hashText.toString();
     }
 }

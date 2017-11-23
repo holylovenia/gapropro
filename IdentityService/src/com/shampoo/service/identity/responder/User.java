@@ -10,7 +10,7 @@ import java.sql.SQLException;
 public interface User {
 
     @WebMethod
-    public String fetchUserDataFromToken(String access_token) throws SQLException;
+    public String fetchUserDataFromToken(String access_token);
 
     @WebMethod
     public void changeUserData(int id, String fullName, String phoneNumber, String profilePicture, int isDriver);

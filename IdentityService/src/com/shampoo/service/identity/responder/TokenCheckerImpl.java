@@ -9,9 +9,8 @@ public class TokenCheckerImpl implements TokenChecker {
 
     @Override
     public String checkToken(String access_token) {
-        DatabaseManager databaseManager;
         try {
-            databaseManager = new DatabaseManager();
+            DatabaseManager databaseManager = new DatabaseManager();
             String result = databaseManager.checkAccessToken(access_token);
             databaseManager.closeConnection();
             return result;

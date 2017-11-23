@@ -30,33 +30,41 @@ public class CompleteOrderServlet extends HttpServlet {
         try {
             OrderClient orderClient = new OrderClient();
             String result = orderClient.getOrder().order(new CookieHandler().getAccessTokenCookie(request), orderBean.getDriverId(), orderBean.getPickingPoint(), orderBean.getDestination(), orderBean.getComment(), orderBean.getRating());
-            if (result.equals("Successful")) {
-                response.sendRedirect("/transactionuser");
-            } else if (result.equals("Error")) {
-                response.getOutputStream().println("<script type=\"text/javascript\">");
-                response.getOutputStream().println("alert(\"Failed to complete order!\");");
-                response.getOutputStream().println("window.location =\"order.jsp\"");
-                response.getOutputStream().println("</script>");
-            } else if (result.equals("invalid") || result.equals("expired")) {
-                response.getOutputStream().println("<script type=\"text/javascript\">");
-                response.getOutputStream().println("alert(\"Your token is invalid or expired!\");");
-                response.getOutputStream().println("window.location =\"handleLogout.jsp\"");
-                response.getOutputStream().println("</script>");
-            } else if (result.equals("invalid_ip")) {
-                response.getOutputStream().println("<script type=\"text/javascript\">");
-                response.getOutputStream().println("alert(\"Invalid ip address detected!\");");
-                response.getOutputStream().println("window.location =\"handleLogout.jsp\"");
-                response.getOutputStream().println("</script>");
-            } else if (result.equals("invalid_malformed")) {
-                response.getOutputStream().println("<script type=\"text/javascript\">");
-                response.getOutputStream().println("alert(\"Malformed token detected!\");");
-                response.getOutputStream().println("window.location =\"handleLogout.jsp\"");
-                response.getOutputStream().println("</script>");
-            } else if (result.equals("invalid_agent")) {
-                response.getOutputStream().println("<script type=\"text/javascript\">");
-                response.getOutputStream().println("alert(\"Invalid user agent detected!\");");
-                response.getOutputStream().println("window.location =\"handleLogout.jsp\"");
-                response.getOutputStream().println("</script>");
+            switch (result) {
+                case "Successful":
+                    response.sendRedirect("/transactionuser");
+                    break;
+                case "Error":
+                    response.getOutputStream().println("<script type=\"text/javascript\">");
+                    response.getOutputStream().println("alert(\"Failed to complete order!\");");
+                    response.getOutputStream().println("window.location =\"order.jsp\"");
+                    response.getOutputStream().println("</script>");
+                    break;
+                case "invalid":
+                case "expired":
+                    response.getOutputStream().println("<script type=\"text/javascript\">");
+                    response.getOutputStream().println("alert(\"Your token is invalid or expired!\");");
+                    response.getOutputStream().println("window.location =\"handleLogout.jsp\"");
+                    response.getOutputStream().println("</script>");
+                    break;
+                case "invalid_ip":
+                    response.getOutputStream().println("<script type=\"text/javascript\">");
+                    response.getOutputStream().println("alert(\"Invalid ip address detected!\");");
+                    response.getOutputStream().println("window.location =\"handleLogout.jsp\"");
+                    response.getOutputStream().println("</script>");
+                    break;
+                case "invalid_malformed":
+                    response.getOutputStream().println("<script type=\"text/javascript\">");
+                    response.getOutputStream().println("alert(\"Malformed token detected!\");");
+                    response.getOutputStream().println("window.location =\"handleLogout.jsp\"");
+                    response.getOutputStream().println("</script>");
+                    break;
+                case "invalid_agent":
+                    response.getOutputStream().println("<script type=\"text/javascript\">");
+                    response.getOutputStream().println("alert(\"Invalid user agent detected!\");");
+                    response.getOutputStream().println("window.location =\"handleLogout.jsp\"");
+                    response.getOutputStream().println("</script>");
+                    break;
             }
         } catch (SQLException e) {
             e.printStackTrace();

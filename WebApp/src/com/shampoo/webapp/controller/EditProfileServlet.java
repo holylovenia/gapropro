@@ -21,10 +21,6 @@ import java.util.List;
 @WebServlet(name = "EditProfileServlet")
 public class EditProfileServlet extends HttpServlet {
 
-    private String filePath = "/images/";
-    private int maxFileSize = 5000 * 1024;
-    private int maxMemSize = 1000 * 1024;
-
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
         //File Upload
@@ -38,9 +34,11 @@ public class EditProfileServlet extends HttpServlet {
         if (ServletFileUpload.isMultipartContent(request)) {
             DiskFileItemFactory factory = new DiskFileItemFactory();
             factory.setRepository(new File("C:\\temp"));
+            int maxMemSize = 1000 * 1024;
             factory.setSizeThreshold(maxMemSize);
 
             ServletFileUpload upload = new ServletFileUpload(factory);
+            int maxFileSize = 5000 * 1024;
             upload.setSizeMax(maxFileSize);
 
             try {
@@ -56,6 +54,7 @@ public class EditProfileServlet extends HttpServlet {
                             System.out.println(extension);
                             System.out.println(getServletContext().getRealPath("/"));
                             newProfilePicName = userName + "." + extension;
+                            String filePath = "/images/";
                             System.out.println(getServletContext().getRealPath(filePath + File.separator + userName + "." + extension));
                             item.write(new File(getServletContext().getRealPath(filePath + File.separator + userName + "." + extension)));
                         }
@@ -87,22 +86,26 @@ public class EditProfileServlet extends HttpServlet {
                 String access_token = (cookieHandler.getAccessTokenCookie(request));
                 if (access_token != null) {
                     String result = userManagementClient.getUserManagement().changeCurrentUserData(access_token, newName, newPhone, newProfilePicName, newStatusDriver);
-                    if (result.equals("Successful")) {
-                        userData.setName(newName);
-                        userData.setPhoneNumber(newPhone);
-                        userData.setDriverStatus(newStatusDriver);
-                        userData.setProfilePicture(newProfilePicName);
-                        response.sendRedirect("profile.jsp");
-                    } else if (result.equals("Error")) {
-                        response.getOutputStream().println("<script type=\"text/javascript\">");
-                        response.getOutputStream().println("alert(\"Failed to edit your profile!\");");
-                        response.getOutputStream().println("window.location =\"editprofile.jsp\"");
-                        response.getOutputStream().println("</script>");
-                    } else {
-                        response.getOutputStream().println("<script type=\"text/javascript\">");
-                        response.getOutputStream().println("alert(\"Your token is invalid or expired!\");");
-                        response.getOutputStream().println("window.location =\"handleLogout.jsp\"");
-                        response.getOutputStream().println("</script>");
+                    switch (result) {
+                        case "Successful":
+                            userData.setName(newName);
+                            userData.setPhoneNumber(newPhone);
+                            userData.setDriverStatus(newStatusDriver);
+                            userData.setProfilePicture(newProfilePicName);
+                            response.sendRedirect("profile.jsp");
+                            break;
+                        case "Error":
+                            response.getOutputStream().println("<script type=\"text/javascript\">");
+                            response.getOutputStream().println("alert(\"Failed to edit your profile!\");");
+                            response.getOutputStream().println("window.location =\"editprofile.jsp\"");
+                            response.getOutputStream().println("</script>");
+                            break;
+                        default:
+                            response.getOutputStream().println("<script type=\"text/javascript\">");
+                            response.getOutputStream().println("alert(\"Your token is invalid or expired!\");");
+                            response.getOutputStream().println("window.location =\"handleLogout.jsp\"");
+                            response.getOutputStream().println("</script>");
+                            break;
                     }
                 }
             }

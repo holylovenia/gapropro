@@ -20,63 +20,79 @@ public class HideServlet extends HttpServlet {
             TransactionClient transactionClient = new TransactionClient();
             if (request.getParameter("driverhistory") != null) {
                 String resp = transactionClient.getTransaction().hideFromDriver(new CookieHandler().getAccessTokenCookie(request), hideID);
-                if (resp.equals("Error")) {
-                    response.getOutputStream().println("<script type=\"text/javascript\">");
-                    response.getOutputStream().println("alert(\"Failed to hide transaction history!\");");
-                    response.getOutputStream().println("window.location =\"driverhistory.jsp\"");
-                    response.getOutputStream().println("</script>");
-                } else if (resp.equals("invalid") || resp.equals("expired")) {
-                    response.getOutputStream().println("<script type=\"text/javascript\">");
-                    response.getOutputStream().println("alert(\"Your token is invalid or expired!\");");
-                    response.getOutputStream().println("window.location =\"handleLogout.jsp\"");
-                    response.getOutputStream().println("</script>");
-                } else if (resp.equals("invalid_ip")) {
-                    response.getOutputStream().println("<script type=\"text/javascript\">");
-                    response.getOutputStream().println("alert(\"Invalid ip address detected!\");");
-                    response.getOutputStream().println("window.location =\"handleLogout.jsp\"");
-                    response.getOutputStream().println("</script>");
-                } else if (resp.equals("invalid_agent")) {
-                    response.getOutputStream().println("<script type=\"text/javascript\">");
-                    response.getOutputStream().println("alert(\"Invalid user agent detected!\");");
-                    response.getOutputStream().println("window.location =\"handleLogout.jsp\"");
-                    response.getOutputStream().println("</script>");
-                } else if (resp.equals("invalid_malformed")) {
-                    response.getOutputStream().println("<script type=\"text/javascript\">");
-                    response.getOutputStream().println("alert(\"Malformed token detected!\");");
-                    response.getOutputStream().println("window.location =\"handleLogout.jsp\"");
-                    response.getOutputStream().println("</script>");
-                } else {
-                    response.sendRedirect("/transactiondriver");
+                switch (resp) {
+                    case "Error":
+                        response.getOutputStream().println("<script type=\"text/javascript\">");
+                        response.getOutputStream().println("alert(\"Failed to hide transaction history!\");");
+                        response.getOutputStream().println("window.location =\"driverhistory.jsp\"");
+                        response.getOutputStream().println("</script>");
+                        break;
+                    case "invalid":
+                    case "expired":
+                        response.getOutputStream().println("<script type=\"text/javascript\">");
+                        response.getOutputStream().println("alert(\"Your token is invalid or expired!\");");
+                        response.getOutputStream().println("window.location =\"handleLogout.jsp\"");
+                        response.getOutputStream().println("</script>");
+                        break;
+                    case "invalid_ip":
+                        response.getOutputStream().println("<script type=\"text/javascript\">");
+                        response.getOutputStream().println("alert(\"Invalid ip address detected!\");");
+                        response.getOutputStream().println("window.location =\"handleLogout.jsp\"");
+                        response.getOutputStream().println("</script>");
+                        break;
+                    case "invalid_agent":
+                        response.getOutputStream().println("<script type=\"text/javascript\">");
+                        response.getOutputStream().println("alert(\"Invalid user agent detected!\");");
+                        response.getOutputStream().println("window.location =\"handleLogout.jsp\"");
+                        response.getOutputStream().println("</script>");
+                        break;
+                    case "invalid_malformed":
+                        response.getOutputStream().println("<script type=\"text/javascript\">");
+                        response.getOutputStream().println("alert(\"Malformed token detected!\");");
+                        response.getOutputStream().println("window.location =\"handleLogout.jsp\"");
+                        response.getOutputStream().println("</script>");
+                        break;
+                    default:
+                        response.sendRedirect("/transactiondriver");
+                        break;
                 }
             } else {
                 String resp = transactionClient.getTransaction().hideFromUser(new CookieHandler().getAccessTokenCookie(request), hideID);
-                if (resp.equals("Error")) {
-                    response.getOutputStream().println("<script type=\"text/javascript\">");
-                    response.getOutputStream().println("alert(\"Failed to hide transaction history!\");");
-                    response.getOutputStream().println("window.location =\"history.jsp\"");
-                    response.getOutputStream().println("</script>");
-                } else if (resp.equals("invalid") || resp.equals("expired")) {
-                    response.getOutputStream().println("<script type=\"text/javascript\">");
-                    response.getOutputStream().println("alert(\"Your token is invalid or expired!\");");
-                    response.getOutputStream().println("window.location =\"handleLogout.jsp\"");
-                    response.getOutputStream().println("</script>");
-                } else if (resp.equals("invalid_ip")) {
-                    response.getOutputStream().println("<script type=\"text/javascript\">");
-                    response.getOutputStream().println("alert(\"Invalid ip address detected!\");");
-                    response.getOutputStream().println("window.location =\"handleLogout.jsp\"");
-                    response.getOutputStream().println("</script>");
-                } else if (resp.equals("invalid_malformed")) {
-                    response.getOutputStream().println("<script type=\"text/javascript\">");
-                    response.getOutputStream().println("alert(\"Malformed token detected!\");");
-                    response.getOutputStream().println("window.location =\"handleLogout.jsp\"");
-                    response.getOutputStream().println("</script>");
-                } else if (resp.equals("invalid_address")) {
-                    response.getOutputStream().println("<script type=\"text/javascript\">");
-                    response.getOutputStream().println("alert(\"Invalid user agent detected!\");");
-                    response.getOutputStream().println("window.location =\"handleLogout.jsp\"");
-                    response.getOutputStream().println("</script>");
-                } else {
-                    response.sendRedirect("/transactionuser");
+                switch (resp) {
+                    case "Error":
+                        response.getOutputStream().println("<script type=\"text/javascript\">");
+                        response.getOutputStream().println("alert(\"Failed to hide transaction history!\");");
+                        response.getOutputStream().println("window.location =\"history.jsp\"");
+                        response.getOutputStream().println("</script>");
+                        break;
+                    case "invalid":
+                    case "expired":
+                        response.getOutputStream().println("<script type=\"text/javascript\">");
+                        response.getOutputStream().println("alert(\"Your token is invalid or expired!\");");
+                        response.getOutputStream().println("window.location =\"handleLogout.jsp\"");
+                        response.getOutputStream().println("</script>");
+                        break;
+                    case "invalid_ip":
+                        response.getOutputStream().println("<script type=\"text/javascript\">");
+                        response.getOutputStream().println("alert(\"Invalid ip address detected!\");");
+                        response.getOutputStream().println("window.location =\"handleLogout.jsp\"");
+                        response.getOutputStream().println("</script>");
+                        break;
+                    case "invalid_malformed":
+                        response.getOutputStream().println("<script type=\"text/javascript\">");
+                        response.getOutputStream().println("alert(\"Malformed token detected!\");");
+                        response.getOutputStream().println("window.location =\"handleLogout.jsp\"");
+                        response.getOutputStream().println("</script>");
+                        break;
+                    case "invalid_address":
+                        response.getOutputStream().println("<script type=\"text/javascript\">");
+                        response.getOutputStream().println("alert(\"Invalid user agent detected!\");");
+                        response.getOutputStream().println("window.location =\"handleLogout.jsp\"");
+                        response.getOutputStream().println("</script>");
+                        break;
+                    default:
+                        response.sendRedirect("/transactionuser");
+                        break;
                 }
             }
         } catch (SQLException e) {

@@ -93,16 +93,4 @@ public class WelcomeServlet extends HttpServlet {
             response.sendRedirect("login.jsp");
         }
     }
-
-    public JSONArray getPreferredLocation(HttpServletRequest request, HttpServletResponse response) throws IOException, SQLException {
-        PreferredLocationClient preferredLocationClient = new PreferredLocationClient();
-        String preferredLocations = preferredLocationClient.getPreferredLocation().getUserPreferredLocations(new CookieHandler().getAccessTokenCookie(request));
-        if (preferredLocations.equals("expired") || preferredLocationClient.equals("invalid") || preferredLocations.equals("Error") ||
-                preferredLocationClient.equals("invalid_ip") || preferredLocationClient.equals("invalid_agent") || preferredLocationClient.equals("invalid_malformed")) {
-            response.sendRedirect("login.jsp");
-        } else {
-            return new JSONArray(preferredLocations);
-        }
-        return null;
-    }
 }

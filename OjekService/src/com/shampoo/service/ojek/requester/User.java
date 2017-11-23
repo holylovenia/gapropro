@@ -13,7 +13,7 @@ public interface User {
     public String fetchUserDataFromToken(String access_token);
 
     @WebMethod
-    public void changeUserData(int id, String fullName, String phoneNumber, String profilePicture, int isDriver) throws SQLException;
+    public void changeUserData(int id, String fullName, String phoneNumber, String profilePicture, int isDriver);
 
     @WebMethod
     public String fetchDriversData(String access_token);
