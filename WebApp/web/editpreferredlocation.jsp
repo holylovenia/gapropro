@@ -1,10 +1,4 @@
-<%@ page import="java.util.ArrayList" %><%--
-  Created by IntelliJ IDEA.
-  User: verenaseverina
-  Date: 11/2/17
-  Time: 5:39 PM
-  To change this template use File | Settings | File Templates.
---%>
+<%@ page import="java.util.ArrayList" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <jsp:useBean id="userData" class="com.shampoo.webapp.model.UserBean" scope="session" />
 <% if (userData.getUserID() == null) { response.sendRedirect("login.jsp"); } else {%>
@@ -38,7 +32,7 @@
                     <td class='edit-profile-table-row'><b><% out.print(count); %></b></td>
                     <td class='edit-profile-table-row' id="edit-profile-row-<% out.print(count); %>"><b> <% out.print(location); %> </b></td>
                     <td class='edit-profile-table-row'>
-                        <%//TODO: update preferred location %>
+
                         <form action='/editlocation' method='post'>
                             <img src='img/pencil.svg' class='edit-profile-icon-edit' id="edit-profile-icon-edit-<% out.print(count); %>" onclick=updateLocation(<% out.print(count); %>)>
                             <input type='hidden' name='location1' id="location1-<% out.print(count); %>" value='<% out.print(location); %>'>
@@ -46,7 +40,6 @@
                             <button type='submit' class='edit-location-button' id='edit-location-button-update-<% out.print(count); %>'> </button>
                         </form>
 
-                        <%//TODO: delete preferred location %>
                         <form action='/deletelocation' method='post'>
                             <img src='img/cross.svg' class='edit-profile-icon-delete' onclick=deleteLocation(<% out.print(count); %>)>
                             <input type='hidden' name='location' value='<% out.print(location); %>'>

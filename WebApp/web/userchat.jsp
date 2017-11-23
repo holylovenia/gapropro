@@ -1,7 +1,13 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<jsp:useBean id="userData" class="com.shampoo.webapp.model.UserBean" scope="session" />
+<jsp:useBean id="orderData" class="com.shampoo.webapp.model.OrderBean" scope="session" />
+
+<% if (userData.getUserID() == null) response.sendRedirect("login.jsp");%>
 <html>
 <head>
     <title>Order</title>
     <link rel="stylesheet" type="text/css" href="styles/order.css">
+    <link rel="manifest" href="etc/manifest.json">
     <script src="js/handler.js"></script>
 </head>
 <body>
@@ -41,22 +47,49 @@
             </a>
         </div>
     </div>
-    <div class="order-body" ng-app="driverChat">
-        <h1 class="order-header">
-            LOOKING FOR AN ORDER
-        </h1>
-        <div class="order-status" ng-controller="orderController">
-            <button type="button" class="find-order" ng-show="!finding_order" ng-click="findOrder()">
-                Find Order
-            </button>
+    <div class="order-body" ng-app="userChat">
+        <h2 class="order-header">
+            MAKE AN ORDER
+        </h2>
+        <div class="order-nav-bar">
+            <div class="order-section order-section-1">
+                <div class="order-section-circle">
+                    <p> 1 </p>
+                </div>
+                <div class="order-section-text">
+                    Select Destination
+                </div>
+            </div>
 
-            <div class="status" ng-show="finding_order">Finding Order</div>
-            <div class="chat-username" ng-show="finding_order">{{username}}</div>
-            <button type="button" class="cancel" ng-show="finding_order && !order_found" ng-click="cancelFindOrder()">
-                Cancel
-            </button>
+            <div class="order-section order-section-2">
+                <div class="order-section-circle">
+                    <p> 2 </p>
+                </div>
+                <div class="order-section-text">
+                    Select a Driver
+                </div>
+            </div>
+
+            <div class="order-section order-section-3 order-section-active">
+                <div class="order-section-circle">
+                    <p> 3 </p>
+                </div>
+                <div class="order-section-text">
+                    Chat Driver
+                </div>
+            </div>
+
+            <div class="order-section order-section-4">
+                <div class="order-section-circle">
+                    <p> 4 </p>
+                </div>
+                <div class="order-section-text">
+                    Complete your Order
+                </div>
+            </div>
+
         </div>
-        <div class="order-form" ng-show="order_found">
+        <div class="order-form">
             <div class="chat-box" ng-controller="chatController">
                 <div class="chat-message">
                     <div class="message-wrapper" ng-repeat="x in message"
@@ -65,9 +98,14 @@
                     </div>
                 </div>
                 <div class="chat-input">
-                    <input type="text" class="chat-input-message" ng-keyup="sendMsgEnter($event)" ng-model="input">
+                    <input type="text" class="chat-input-message" ng-model="input" ng-keyup="sendMsgEnter($event)">
                     <button type="button" class="chat-input-button" ng-click="sendMsg()">Kirim</button>
                 </div>
+            </div>
+            <div class="chat-close-button-container">
+                <button type="button" class="chat-close-button" ng-click="closeChat">
+                    Close
+                </button>
             </div>
         </div>
     </div>
@@ -78,42 +116,20 @@
 <script src="https://www.gstatic.com/firebasejs/4.6.2/firebase.js"></script>
 <script src="https://www.gstatic.com/firebasejs/4.6.2/firebase-messaging.js"></script>
 <script>
-    var app = angular.module("driverChat", []);
-    /**
-     * Order Controller
-     * Mengatur setting pengambilan order
-     */
-    app.controller("orderController", function ($scope, $http, $rootScope) {
-        $rootScope.finding_order = false;
-        $rootScope.order_found = false;
-        $rootScope.foundUsername = "";
-        $scope.findOrder = function () {
-            $rootScope.finding_order = true;
-            $http.post("http://localhost:3000/availability/set_finding_order", {
-                "userId": $rootScope.myId,
-                "findingOrder": 1
-            })
-        };
-        $scope.cancelFindOrder = function () {
-            $rootScope.finding_order = false;
-            $http.post("http://localhost:3000/availability/set_finding_order", {
-                "userId": $rootScope.myId,
-                "findingOrder": 0
-            })
-        }
-    });
+    var app = angular.module("userChat", []);
 
-    /**
-     * Chat Controller
-     * Mengatur pengiriman dan penerimaan pesan, serta mengambil history
-     */
     app.controller("chatController", function ($scope, $http, $rootScope, $window) {
-        // TODO : Change firstId to parameter ID and secondId to driver ID
-        $rootScope.myId = 2;
-        $rootScope.targetId = 1;
+        // Scope Declaration
+        $rootScope.myId = <%=userData.getUserID()%>;
+        $rootScope.targetId = <%=orderData.getDriverId()%>;
         $scope.tokenSet = false;
         $scope.message = [];
         $scope.input = "";
+
+        $scope.closeChat = function () {
+            $window.location.href = '/completeorder.jsp';
+        };
+
         $scope.setupFirebase = function () {
             // Initialize Firebase and get token
             var config = {
@@ -141,18 +157,7 @@
             });
             messaging.onMessage(function (payload) {
                 console.log("Message received. ", payload);
-                var data = JSON.parse(payload.data.notification);
-                if (data.type === "connect" && $rootScope.finding_order) { //Redundant, should be protected by server side
-                    $rootScope.targetId = data.target;
-                    $rootScope.username = data.username;
-                    $rootScope.order_found = true;
-                    $http.post("http://localhost:3000/availability/set_finding_order", {
-                        "userId": $rootScope.myId,
-                        "findingOrder": 0
-                    })
-                } else {
-                    $scope.updateMsg();
-                }
+                $scope.updateMsg();
             });
         };
         /**
@@ -185,7 +190,7 @@
                     $scope.updateMsg();
                 });
             }
-            //$scope.message.push(message);
+            $scope.message.push(message);
             $scope.input = "";
         };
         $scope.sendMsgEnter = function (event) {
@@ -194,15 +199,32 @@
             }
         };
 
+        /**
+         * Choose driver
+         */
+        $scope.selectDriver = function () {
+            $http.post("http://localhost:3000/availability/choose_driver", {
+                "username": <%=userData.getUsername()%>,
+                "senderId": $rootScope.myId,
+                "receiverId": $rootScope.targetId
+            });
+        };
+
         // Scripts to run
         $scope.updateMsg();
+        $scope.selectDriver();
         $scope.setupFirebase();
 
         $window.onfocus = function () {
-            if ($rootScope.order_found) {
-                $scope.updateMsg();
-            }
-        }
+            $scope.updateMsg();
+        };
+
+        //TODO : Change username to current username (use JSP)
+        $http.post("http://localhost:3000/availability/choose_driver", {
+            "username": "HoLAS_Tubis",
+            "senderId": $rootScope.myId,
+            "receiverId": $rootScope.targetId
+        })
     });
 
 </script>

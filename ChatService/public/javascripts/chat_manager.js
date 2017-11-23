@@ -107,4 +107,43 @@ router.get('/get_all_chats', function (req, res, next) {
     });
 });
 
+/**
+ * [ Finish Chat ]
+ * Mengirimkan notifikasi kepada driver jika user sudah finish order.
+ * Input : receiverId
+ */
+router.post('/finish_chat', function (req, res) {
+    var rId = parseInt(req.body.receiverId);
+    var token = "";
+    Firebase.findOne({'user_id': rId}, function (err, firebase) {
+        if (err) throw err;
+        token = firebase.fb_token;
+
+        var options = {
+            method: 'post',
+            json: true,
+            url: "https://fcm.googleapis.com/fcm/send",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "key=AIzaSyDLWhhAQ3MmOPvhwXCny7kLw_HyWWq2A6g"
+            },
+            body: {
+                "data": {
+                    "notification": {
+                        "type": "close"
+                    }
+                },
+                "to": token
+            }
+        };
+
+        request(options, function (err, res, body) {
+            if (err) {
+                console.log('Error :', err);
+                return true;
+            }
+        });
+    });
+});
+
 module.exports = router;

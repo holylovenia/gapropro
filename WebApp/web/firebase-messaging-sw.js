@@ -16,7 +16,7 @@ const messaging = firebase.messaging();
 
 messaging.setBackgroundMessageHandler(function(payload) {
     console.log('[FIREBASE] Background message received ', payload);
-    // Customize notification here
+    // Customize notification
     const notificationTitle = 'Shampoo';
     const notificationOptions = {
         body: 'New chat from Shampoo',

@@ -1,13 +1,7 @@
 <%@ page import="static java.awt.GraphicsConfigTemplate.PREFERRED" %>
 <%@ page import="java.text.DecimalFormat" %>
 <%@ page import="java.text.NumberFormat" %>
-<%--
-  Created by IntelliJ IDEA.
-  User: verenaseverina
-  Date: 11/2/17
-  Time: 5:09 PM
-  To change this template use File | Settings | File Templates.
---%>
+
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <jsp:useBean id="userData" class="com.shampoo.webapp.model.UserBean" scope="session" />
 <% if (userData.getUserID() == null) { response.sendRedirect("login.jsp"); } else {%>
@@ -38,7 +32,13 @@
     </div>
     <div class="profile-nav-bot">
         <div class="profile-section" id="profile-section-1">
-            <a href="order.jsp" class="profile-section-name" id="profile-name-1">
+            <% if (userData.getDriverStatus()==1) {
+                out.print("<a href=\"driverchat.jsp\")");
+               } else {
+                out.print("<a href=\"order.jsp\")");
+               }
+            %>
+            class="profile-section-name" id="profile-name-1">
                 ORDER
             </a>
         </div>

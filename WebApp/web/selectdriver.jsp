@@ -1,12 +1,7 @@
 <%@ page import="com.shampoo.webapp.model.DriverBean" %>
 <%@ page import="java.text.DecimalFormat" %>
-<%@ page import="java.text.NumberFormat" %><%--
-  Created by IntelliJ IDEA.
-  User: verenaseverina
-  Date: 11/2/17
-  Time: 4:46 PM
-  To change this template use File | Settings | File Templates.
---%>
+<%@ page import="java.text.NumberFormat" %>
+
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <jsp:useBean id="userData" class="com.shampoo.webapp.model.UserBean" scope="session" />
 <jsp:useBean id="orderData" class="com.shampoo.webapp.model.OrderBean" scope="session" />
@@ -18,7 +13,7 @@
     <script src="js/handler.js"></script>
 </head>
 <body>
-<div class="container">
+<div class="container-wide">
     <div class="nav-top">
         <div class="logo">
             <p class="projek">
@@ -80,6 +75,15 @@
             <div class="order-section order-section-3">
                 <div class="order-section-circle">
                     <p> 3 </p>
+                </div>
+                <div class="order-section-text">
+                    Chat Driver
+                </div>
+            </div>
+
+            <div class="order-section order-section-4">
+                <div class="order-section-circle">
+                    <p> 4 </p>
                 </div>
                 <div class="order-section-text">
                     Complete your Order

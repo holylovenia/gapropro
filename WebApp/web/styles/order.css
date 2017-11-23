@@ -468,6 +468,22 @@ input {
     clear: both;
 }
 
+.chat-close-button-container {
+    margin-top:50px;
+    text-align:center;
+}
+
+.chat-close-button {
+    width:30%;
+    margin:auto;
+    background-color:#FF0000;
+    color:#FFFFFF;
+    font-weight:bold;
+    border:none;
+    padding:10px;
+    text-transform:uppercase;
+}
+
 /* Driver Chat */
 .order-status {
     text-align:center;
