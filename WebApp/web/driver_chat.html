@@ -56,7 +56,7 @@
                 Cancel
             </button>
         </div>
-        <div class="order-form" ng-show="order_found">
+        <div class="order-form" ng-show="true">
             <div class="chat-box" ng-controller="chatController">
                 <div class="chat-message">
                     <div class="message-wrapper" ng-repeat="x in message"
@@ -65,7 +65,7 @@
                     </div>
                 </div>
                 <div class="chat-input">
-                    <input type="text" class="chat-input-message" ng-click="sendMsgEnter()">
+                    <input type="text" class="chat-input-message" ng-keyup="sendMsgEnter($event)" ng-model="input">
                     <button type="button" class="chat-input-button" ng-click="sendMsg()">Kirim</button>
                 </div>
             </div>
@@ -132,7 +132,7 @@
                     $http.post("http://localhost:3000/firebase/set_token", {
                         "userId": $rootScope.myId,
                         "firebaseToken": currentToken
-                    })
+                    });
                     $scope.tokenSet = true;
                 } else {
                     console.log('No Instance ID token available. Request permission to generate one.');
