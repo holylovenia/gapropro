@@ -16,6 +16,11 @@ var databaseManager = require('./model/mongo_manager');
 var Chat = require('./model/chat');
 var Firebase = require('./model/firebase');
 
+/**
+ * [ Add New Chat ]
+ * Mengirimkan chat kepada user lain
+ * Input : senderId, receiverId, chatMessage
+ */
 router.post('/add_new_chat', function (req, res, next) {
     var sId = parseInt(req.body.senderId);
     var rId = parseInt(req.body.receiverId);
@@ -36,6 +41,7 @@ router.post('/add_new_chat', function (req, res, next) {
             body: {
                 "data": {
                     "notification": {
+                        "type": "message",
                         "body": req.body.chatMessage,
                         "title": "New Message"
                     }
@@ -65,6 +71,11 @@ router.post('/add_new_chat', function (req, res, next) {
     res.send('{"status":true}');
 });
 
+/**
+ * [ Get Chat Log ]
+ * Mengambil chat log user
+ * Input : firstId, secondId
+ */
 router.post('/get_chat_log', function (req, res, next) {
     var fId = req.body.firstId;
     var sId = req.body.secondId;
@@ -80,6 +91,11 @@ router.post('/get_chat_log', function (req, res, next) {
     });
 });
 
+/**
+ * [ Get All Chats ]
+ * Mengambil data semua chat
+ * Input : -
+ */
 router.get('/get_all_chats', function (req, res, next) {
     Chat.find({}, '-_id -__v', function (err, chats) {
         if (err) throw err;
