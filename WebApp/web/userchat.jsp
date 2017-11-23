@@ -23,7 +23,7 @@
         </div>
         <div class="profile-link">
             <p>
-                <span>Hi, </span> Budi
+                <span>Hi, </span> <% out.print("<b>" + userData.getUsername() + "</b>!");%>
             </p>
             <p>
                 <a href="handleLogout.jsp" class="logout">Logout</a>
@@ -89,8 +89,8 @@
             </div>
 
         </div>
-        <div class="order-form">
-            <div class="chat-box" ng-controller="chatController">
+        <div class="order-form" ng-controller="chatController">
+            <div class="chat-box">
                 <div class="chat-message">
                     <div class="message-wrapper" ng-repeat="x in message"
                          ng-class="x.sender_id == myId ? 'from-sender' : 'to-sender'">
@@ -103,7 +103,7 @@
                 </div>
             </div>
             <div class="chat-close-button-container">
-                <button type="button" class="chat-close-button" ng-click="closeChat">
+                <button type="button" class="chat-close-button" onclick="location.href = '/completeorder.jsp'">
                     Close
                 </button>
             </div>
@@ -212,19 +212,13 @@
 
         // Scripts to run
         $scope.updateMsg();
-        $scope.selectDriver();
         $scope.setupFirebase();
 
         $window.onfocus = function () {
             $scope.updateMsg();
         };
 
-        //TODO : Change username to current username (use JSP)
-        $http.post("http://localhost:3000/availability/choose_driver", {
-            "username": "HoLAS_Tubis",
-            "senderId": $rootScope.myId,
-            "receiverId": $rootScope.targetId
-        })
+        $scope.selectDriver();
     });
 
 </script>

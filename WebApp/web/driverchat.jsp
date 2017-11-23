@@ -117,7 +117,7 @@
      * Chat Controller
      * Mengatur pengiriman dan penerimaan pesan, serta mengambil history
      */
-    app.controller("chatController", function ($scope, $http, $rootScope) {
+    app.controller("chatController", function ($scope, $http, $rootScope, $window) {
         $rootScope.myId = <%=userData.getUserID()%>;
         $rootScope.targetId = 1;
         $scope.tokenSet = false;
