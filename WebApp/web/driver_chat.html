@@ -51,12 +51,12 @@
             </button>
 
             <div class="status" ng-show="finding_order">Finding Order</div>
-            <div class="chat-username" ng-show="finding_order">lalala</div>
-            <button type="button" class="cancel" ng-show="finding_order" ng-click="cancelFindOrder()">
+            <div class="chat-username" ng-show="finding_order">{{username}}</div>
+            <button type="button" class="cancel" ng-show="finding_order && !order_found" ng-click="cancelFindOrder()">
                 Cancel
             </button>
         </div>
-        <div class="order-form" ng-show="true">
+        <div class="order-form" ng-show="order_found">
             <div class="chat-box" ng-controller="chatController">
                 <div class="chat-message">
                     <div class="message-wrapper" ng-repeat="x in message"
@@ -86,6 +86,7 @@
     app.controller("orderController", function ($scope, $http, $rootScope) {
         $rootScope.finding_order = false;
         $rootScope.order_found = false;
+        $rootScope.foundUsername = "";
         $scope.findOrder = function () {
             $rootScope.finding_order = true;
             $http.post("http://localhost:3000/availability/set_finding_order", {
@@ -106,7 +107,7 @@
      * Chat Controller
      * Mengatur pengiriman dan penerimaan pesan, serta mengambil history
      */
-    app.controller("chatController", function ($scope, $http, $rootScope) {
+    app.controller("chatController", function ($scope, $http, $rootScope, $window) {
         // TODO : Change firstId to parameter ID and secondId to driver ID
         $rootScope.myId = 2;
         $rootScope.targetId = 1;
@@ -140,12 +141,18 @@
             });
             messaging.onMessage(function (payload) {
                 console.log("Message received. ", payload);
-                if(payload.data.notification.title === ""){
-                    // TODO : Implement method to send chosen driver notification
-                    $rootScope.targetId = payload.data.notification.title.target;
-                    $rootScope.username = payload.data.notification.title.username;
+                var data = JSON.parse(payload.data.notification);
+                if (data.type === "connect" && $rootScope.finding_order) { //Redundant, should be protected by server side
+                    $rootScope.targetId = data.target;
+                    $rootScope.username = data.username;
+                    $rootScope.order_found = true;
+                    $http.post("http://localhost:3000/availability/set_finding_order", {
+                        "userId": $rootScope.myId,
+                        "findingOrder": 0
+                    })
+                } else {
+                    $scope.updateMsg();
                 }
-                $scope.updateMsg();
             });
         };
         /**
@@ -186,9 +193,16 @@
                 $scope.sendMsg();
             }
         };
+
         // Scripts to run
         $scope.updateMsg();
         $scope.setupFirebase();
+
+        $window.onfocus = function () {
+            if ($rootScope.order_found) {
+                $scope.updateMsg();
+            }
+        }
     });
 
 </script>

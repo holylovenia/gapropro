@@ -23,6 +23,11 @@ messaging.setBackgroundMessageHandler(function(payload) {
         icon: '/img/shiba.png'
     };
 
+    self.addEventListener('notificationclick', function(event){
+        event.notification.close();
+        //event.waitUntil(self.clients.openWindow("http://localhost"))
+    })
+
     return self.registration.showNotification(notificationTitle,
         notificationOptions);
 });

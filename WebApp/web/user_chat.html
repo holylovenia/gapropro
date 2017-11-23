@@ -108,7 +108,7 @@
 <script>
     var app = angular.module("userChat", []);
 
-    app.controller("chatController", function ($scope, $http, $rootScope) {
+    app.controller("chatController", function ($scope, $http, $rootScope, $window) {
         // Scope Declaration
         // TODO : Change firstId to parameter ID and secondId to driver ID
         $rootScope.myId = 1;
@@ -137,7 +137,6 @@
                         "firebaseToken": currentToken
                     });
                     $scope.tokenSet = true;
-                    console.log(currentToken);
                 } else {
                     console.log('No Instance ID token available. Request permission to generate one.');
                 }
@@ -189,6 +188,17 @@
         // Scripts to run
         $scope.updateMsg();
         $scope.setupFirebase();
+
+        $window.onfocus = function () {
+            $scope.updateMsg();
+        };
+
+        //TODO : Change username to current username (use JSP)
+        $http.post("http://localhost:3000/availability/choose_driver", {
+            "username": "HoLAS_Tubis",
+            "senderId": $rootScope.myId,
+            "receiverId": $rootScope.targetId
+        })
     });
 
 </script>
