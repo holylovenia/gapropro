@@ -3,6 +3,11 @@
     width: 600px;
 }
 
+.container-wide {
+    margin: 0 auto;
+    width: 700px;
+}
+
 .nav-top {
     width: 100%;
 }
