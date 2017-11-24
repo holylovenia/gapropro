@@ -120,7 +120,7 @@
             <p class="complete-order-name"> <% out.print(selectedDriver.getName()); %> </p>
 
         </div>
-        <form action="/completeorder" method="post" class="complete-order-comment-rate">
+        <form action="/completeorder" method="post" class="complete-order-comment-rate" ng-controller="finishOrderController">
             <input type="hidden" name="driverId" value="" />
             <input type="hidden" name="originCity" value="" />
             <input type="hidden" name="destinationCity" value="" />
@@ -133,12 +133,68 @@
                 <input type="radio" name="rating" id="star-1" value="1" /> <label title="1" class="star-1" for="star-1"></label>
             </div>
             <textarea class="comment-container" name="comment" placeholder="Your comment..."></textarea>
-            <input class="order-complete-button" type="submit" name="submit" value="complete order" />
+            <input class="order-complete-button" type="submit" name="submit" value="complete order" ng-click="finishOrder()" />
         </form>
     </div>
 </div>
 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/4.6.2/firebase.js"></script>
+<script src="https://www.gstatic.com/firebasejs/4.6.2/firebase-messaging.js"></script>
+<script>
 
+    /**
+     * Finish Order Controller
+     * Controls finish order (close driver-side chat)
+     */
+    app.controller("finishOrderController", function ($scope, $http, $rootScope, $window) {
+        $rootScope.myId = <%=userData.getUserID()%>;
+        $rootScope.targetId = <%=orderData.getDriverId()%>;
+        $scope.tokenSet = false;
+
+        $scope.setupFirebase = function () {
+            // Initialize Firebase and get token
+            var config = {
+                apiKey: "AIzaSyCSn3EiT3BZ-GXYq_uxvU-dFxx2C_rrW5I",
+                authDomain: "gapropro-b0e07.firebaseapp.com",
+                databaseURL: "https://gapropro-b0e07.firebaseio.com",
+                projectId: "gapropro-b0e07",
+                storageBucket: "gapropro-b0e07.appspot.com",
+                messagingSenderId: "990522297808"
+            };
+            firebase.initializeApp(config);
+
+            const messaging = firebase.messaging();
+            messaging.requestPermission();
+            messaging.getToken().then(function (currentToken) {
+                if (currentToken) {
+                    $http.post("http://localhost:3000/firebase/set_token", {
+                        "userId": $rootScope.myId,
+                        "firebaseToken": currentToken
+                    });
+                    $scope.tokenSet = true;
+                } else {
+                    console.log('No Instance ID token available. Request permission to generate one.');
+                }
+            });
+            messaging.onMessage(function (payload) {
+                console.log("Message received. ", payload);
+                $scope.updateMsg();
+            });
+        };
+
+        $scope.finishOrder = function () {
+            $http.post("http://localhost:3000/chat/finish_chat", {
+                "receiverId": $rootScope.targetId
+            })
+        };
+
+        // Scripts to run
+        $scope.setupFirebase();
+    });
+
+</script>
 
 </body>
 </html>
