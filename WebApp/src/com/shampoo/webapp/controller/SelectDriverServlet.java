@@ -1,6 +1,7 @@
 package com.shampoo.webapp.controller;
 
 import com.shampoo.webapp.model.OrderBean;
+import com.shampoo.webapp.model.UserBean;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
