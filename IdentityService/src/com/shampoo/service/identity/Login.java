@@ -1,6 +1,5 @@
 package com.shampoo.service.identity;
 
-import eu.bitwalker.useragentutils.UserAgent;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -23,7 +22,7 @@ import java.util.List;
 public class Login extends javax.servlet.http.HttpServlet {
     protected void doPost(javax.servlet.http.HttpServletRequest request, javax.servlet.http.HttpServletResponse response) throws javax.servlet.ServletException, IOException {
         String userAgent = request.getHeader("User-Agent");
-        System.out.println("User-Agent " + UserAgent.parseUserAgentString(userAgent).getBrowser());
+        System.out.println("User-Agent " + request.getHeader("User-Agent"));
         String ipAddress = getClientIpAddr(request);
         System.out.println("IP Address " + ipAddress);
         JSONObject json = new JSONObject();
