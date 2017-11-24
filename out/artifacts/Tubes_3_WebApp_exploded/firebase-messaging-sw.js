@@ -23,9 +23,8 @@ messaging.setBackgroundMessageHandler(function(payload) {
         icon: '/img/shiba.png'
     };
 
-    self.addEventListener('notificationclick', function(event){
-        event.notification.close();
-        //event.waitUntil(self.clients.openWindow("http://localhost"))
+    self.addEventListener("message", function(event) {
+        event.source.postMessage("Responding to " + event.data);
     });
 
     return self.registration.showNotification(notificationTitle,
