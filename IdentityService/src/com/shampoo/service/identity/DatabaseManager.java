@@ -1,6 +1,5 @@
 package com.shampoo.service.identity;
 
-import eu.bitwalker.useragentutils.UserAgent;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -198,7 +197,7 @@ public class DatabaseManager {
                     if (!ipAddress.equals(dbIpAddress)) {
                         return "invalid_ip";
                     }
-                    if (!UserAgent.parseUserAgentString(userAgent).getBrowser().equals(UserAgent.parseUserAgentString(dbUserAgent).getBrowser())) {
+                    if (!userAgent.equals(dbUserAgent)) {
                         return "invalid_agent";
                     }
 

@@ -42,14 +42,13 @@ public class LoginServlet extends HttpServlet {
         if (!(cookieHandler.isTextValid(username) && cookieHandler.isTextValid(password))) {
             response.sendRedirect("login.jsp");
         } else {
-
             String access_token = null;
             try {
                 access_token = sendPost(username, password, userAgent, ipAddress);
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
+            System.out.println("access_token " + access_token);
             JSONObject access_token_JSON;
             if (access_token != null) {
                 access_token_JSON = new JSONObject(access_token);
