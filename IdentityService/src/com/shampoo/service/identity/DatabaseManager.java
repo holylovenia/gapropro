@@ -1,5 +1,7 @@
 package com.shampoo.service.identity;
 
+import eu.bitwalker.useragentutils.Browser;
+import eu.bitwalker.useragentutils.UserAgent;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -15,7 +17,7 @@ public class DatabaseManager {
 
     public DatabaseManager() throws SQLException {
         connection = getConnection();
-        if(connection == null) {
+        if (connection == null) {
             System.out.println("Failed to connect");
         }
         statement = connection.createStatement();
@@ -102,7 +104,7 @@ public class DatabaseManager {
 
     public void updateExpiredTime(String access_token, String userAgent, String ipAddress) {
         try {
-            if (access_token  != null) {
+            if (access_token != null) {
                 String selectQuery = "SELECT * FROM users WHERE access_token LIKE ?";
                 PreparedStatement oldPreparedStatement = connection.prepareStatement(selectQuery);
                 oldPreparedStatement.setString(1, access_token);
@@ -196,14 +198,14 @@ public class DatabaseManager {
                     if (!ipAddress.equals(dbIpAddress)) {
                         return "invalid_ip";
                     }
-                    if (!userAgent.equals(dbUserAgent)) {
+                    if (!UserAgent.parseUserAgentString(userAgent).getBrowser().equals(UserAgent.parseUserAgentString(dbUserAgent).getBrowser())) {
                         return "invalid_agent";
                     }
 
                     Timestamp now = new Timestamp(System.currentTimeMillis());
                     Timestamp expired = resultSet.getTimestamp("expired_time");
                     if (expired.before(now)) {
-                        if(canTokenBeRenewed(expired, now) && ipAddress.equals(dbIpAddress) && userAgent.equals(dbUserAgent)) {
+                        if (canTokenBeRenewed(expired, now) && ipAddress.equals(dbIpAddress) && userAgent.equals(dbUserAgent)) {
                             System.out.println("CanBeRenewed: TRUE");
                             updateExpiredTime(access_token, dbUserAgent, dbIpAddress);
                             return "valid";
@@ -214,13 +216,11 @@ public class DatabaseManager {
                     } else {
                         return "valid";
                     }
-                }
-                else {
+                } else {
                     return "invalid_malformed";
                 }
             }
-        }
-        else {
+        } else {
             return "invalid_malformed";
         }
     }
@@ -265,9 +265,9 @@ public class DatabaseManager {
         int numColumns = metaData.getColumnCount();
 
         int counter = 0;
-        while(resultSet.next()) {
+        while (resultSet.next()) {
             JSONObject jsonObject = new JSONObject();
-            for(int i = 1; i <= numColumns; i++) {
+            for (int i = 1; i <= numColumns; i++) {
                 String columnName = metaData.getColumnName(i);
                 jsonObject.put(columnName, resultSet.getObject(columnName));
             }

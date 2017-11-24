@@ -1,5 +1,6 @@
 package com.shampoo.service.identity;
 
+import eu.bitwalker.useragentutils.UserAgent;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -22,7 +23,9 @@ import java.util.List;
 public class Login extends javax.servlet.http.HttpServlet {
     protected void doPost(javax.servlet.http.HttpServletRequest request, javax.servlet.http.HttpServletResponse response) throws javax.servlet.ServletException, IOException {
         String userAgent = request.getHeader("User-Agent");
+        System.out.println("User-Agent " + UserAgent.parseUserAgentString(userAgent).getBrowser());
         String ipAddress = getClientIpAddr(request);
+        System.out.println("IP Address " + ipAddress);
         JSONObject json = new JSONObject();
         try {
             //Connection Handling & Request
@@ -82,22 +85,6 @@ public class Login extends javax.servlet.http.HttpServlet {
     }
 
     private String getClientIpAddr(HttpServletRequest request) {
-        String ip = request.getHeader("X-Forwarded-For");
-        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getHeader("Proxy-Client-IP");
-        }
-        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getHeader("WL-Proxy-Client-IP");
-        }
-        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getHeader("HTTP_CLIENT_IP");
-        }
-        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getHeader("HTTP_X_FORWARDED_FOR");
-        }
-        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getRemoteAddr();
-        }
-        return ip;
+        return request.getHeader("X-Forwarded-For");
     }
 }

@@ -34,6 +34,10 @@ public class LoginServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String username = request.getParameter("username");
         String password = request.getParameter("password");
+        final String userAgent = request.getHeader("User-Agent");
+        final String ipAddress = getClientIpAddr(request);
+        System.out.println("User-Agent " + request.getHeader("User-Agent"));
+        System.out.println("IP Address " + getClientIpAddr(request));
 
         CookieHandler cookieHandler = new CookieHandler();
         if (!(cookieHandler.isTextValid(username) && cookieHandler.isTextValid(password))) {
@@ -42,7 +46,7 @@ public class LoginServlet extends HttpServlet {
 
             String access_token = null;
             try {
-                access_token = sendPost(username, password);
+                access_token = sendPost(username, password, userAgent, ipAddress);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -191,9 +195,11 @@ public class LoginServlet extends HttpServlet {
         }
     }
 
-    private String sendPost(String _username, String _password) throws Exception {
+    private String sendPost(String _username, String _password, String userAgent, String ipAddress) throws Exception {
         HttpClient httpClient = new DefaultHttpClient();
         HttpPost httpPost = new HttpPost("http://localhost:9001/login");
+        httpPost.addHeader("User-Agent", userAgent);
+        httpPost.addHeader("X-Forwarded-For", ipAddress);
 
         List<NameValuePair> params = new ArrayList<>();
         params.add(new BasicNameValuePair("username", _username));
@@ -215,5 +221,25 @@ public class LoginServlet extends HttpServlet {
             e.printStackTrace();
         }
         return null;
+    }
+
+    private String getClientIpAddr(HttpServletRequest request) {
+        String ip = request.getHeader("X-Forwarded-For");
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("Proxy-Client-IP");
+        }
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("WL-Proxy-Client-IP");
+        }
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("HTTP_CLIENT_IP");
+        }
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("HTTP_X_FORWARDED_FOR");
+        }
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getRemoteAddr();
+        }
+        return ip;
     }
 }
