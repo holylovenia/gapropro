@@ -169,8 +169,12 @@ router.post('/choose_driver', function (req, res) {
                 console.log('Error :', err);
                 return true;
             }
+            console.log(body);
         });
     });
+
+    res.set('Content-Type', 'application/json');
+    res.send('{"status":true}');
 });
 
 module.exports = router;

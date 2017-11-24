@@ -1,4 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<jsp:useBean id="userData" class="com.shampoo.webapp.model.UserBean" scope="session" />
+<% if (userData.getUserID() != null) { response.sendRedirect("profile.jsp"); } else {%>
 <html>
 <head>
     <title>Login</title>
@@ -33,3 +35,4 @@
 </div>
 </body>
 </html>
+<% } %>

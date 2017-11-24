@@ -54,7 +54,7 @@ router.post('/add_new_chat', function (req, res, next) {
         request(options, function (err, res, body) {
             if (err) {
                 console.log('Error :', err);
-                return
+                return true;
             }
         });
     });

@@ -1,11 +1,11 @@
 function validateEmpty(element_id1, element_id2,button_id){
     var e1 = document.getElementById(element_id1).value;
     var e2 = 'dummy_string';
-    if(element_id2 != "dummy"){
+    if(element_id2 !== "dummy"){
         var e2 = document.getElementById(element_id2).value;
     }
 
-    if(element_id2 == "editprofile-phone"){
+    if(element_id2 === "editprofile-phone"){
         var regex = /^\d{9,12}$/;
         if(!regex.test(e2)){
             document.getElementById(element_id2).style.backgroundColor = 'red';
@@ -14,7 +14,7 @@ function validateEmpty(element_id1, element_id2,button_id){
         }
     }
 
-    if(e1 == "" || e1 == null || e2 == "" || e2 == null ){
+    if(e1 === "" || e1 === null || e2 === "" || e2 === null ){
         alert("Kolom tidak boleh kosong");
         return false;
     }else{
@@ -28,7 +28,7 @@ function changePath() {
 }
 
 function deleteLocation(row_id){
-    if(confirm("Yakin mau dihapus?")==1){
+    if(confirm("Yakin mau dihapus?")===1){
         document.getElementById("edit-location-button-delete-" + row_id).click();
     }
 }
@@ -42,7 +42,7 @@ function updateLocation(row_id){
 
     save.onclick = function () {
         var inputValue = document.getElementById("edit-profile-input-dummy-"+ row_id +"").value;
-        if(inputValue == "" || inputValue == null){
+        if(inputValue === "" || inputValue === null){
             alert("Kolom tidak boleh kosong");
         }else{
             document.getElementById("location2-"+row_id).value = inputValue;
@@ -52,5 +52,9 @@ function updateLocation(row_id){
 }
 
 function clicked(e){
-    if(!confirm('Are you sure you want to pick this driver?'))e.preventDefault();
+    if(!confirm('Are you sure you want to pick this driver?')) {
+        e.preventDefault();
+    } else {
+
+    }
 }

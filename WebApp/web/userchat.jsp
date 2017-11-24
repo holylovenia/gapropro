@@ -204,7 +204,7 @@
          */
         $scope.selectDriver = function () {
             $http.post("http://localhost:3000/availability/choose_driver", {
-                "username": <%=userData.getUsername()%>,
+                "username": <%= "\"" + userData.getUsername() + "\"" %>,
                 "senderId": $rootScope.myId,
                 "receiverId": $rootScope.targetId
             });

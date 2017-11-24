@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<jsp:useBean id="userData" class="com.shampoo.webapp.model.UserBean" scope="session" />
+<jsp:useBean id="userData" class="com.shampoo.webapp.model.UserBean" scope="session"/>
 
 <% if (userData.getUserID() == null) response.sendRedirect("login.jsp");%>
 <html>
@@ -30,13 +30,12 @@
     </div>
     <div class="nav-bot">
         <div class="section" id="section-order">
-            <% if (userData.getDriverStatus()==1) {
-                out.print("<a href=\"driverchat.jsp\")");
+            <% if (userData.getDriverStatus() == 1) {
+                out.print("<a href=\"driverchat.jsp\" class=\"section-name\" id=\"order\">");
             } else {
-                out.print("<a href=\"order.jsp\")");
+                out.print("<a href=\"order.jsp\" class=\"section-name\" id=\"order\">");
             }
             %>
-            class="section-name" id="order">
             ORDER
             </a>
         </div>
@@ -118,7 +117,7 @@
      * Mengatur pengiriman dan penerimaan pesan, serta mengambil history
      */
     app.controller("chatController", function ($scope, $http, $rootScope, $window) {
-        $rootScope.myId = <%=userData.getUserID()%>;
+        $rootScope.myId = <%= userData.getUserID() %>;
         $rootScope.targetId = 1;
         $scope.tokenSet = false;
         $scope.message = [];
@@ -160,11 +159,11 @@
                         "userId": $rootScope.myId,
                         "findingOrder": 0
                     })
-                }				
-                else if(data.type === "close"){
+                }
+                else if (data.type === "close") {
                     $rootScope.finding_order = false;
                 }
-				else {
+                else {
                     $scope.updateMsg();
                 }
             });
