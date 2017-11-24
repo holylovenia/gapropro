@@ -101,7 +101,7 @@ public class OrderServlet extends HttpServlet {
                                     driverBean.setName(driverJsonObject.getString("name"));
                                     driverBean.setProfilePicture(driverJsonObject.getString("profile_picture"));
                                     driverBean.setVotes(driverJsonObject.getInt("votes"));
-                                    driverBean.setRating(driverJsonObject.getFloat("rating"));
+                                    driverBean.setRating((float)driverJsonObject.getDouble("rating"));
                                     if (driverJsonObject.getInt("is_preferred") == 1) {
                                         preferredDrivers.add(driverBean);
                                     } else {

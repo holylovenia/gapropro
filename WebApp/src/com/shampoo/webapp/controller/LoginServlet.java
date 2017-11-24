@@ -12,8 +12,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
-import org.json.JSONArray;
-import org.json.JSONObject;
+import org.json.*;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
@@ -169,7 +168,7 @@ public class LoginServlet extends HttpServlet {
                                             }
                                             userBean.setPreferredLocation(preferredLocations);
                                             int votesJSON = json.getInt("votes");
-                                            float ratingJSON = json.getFloat("rating");
+                                            float ratingJSON = (float)json.getDouble("rating");
                                             userBean.setRating(ratingJSON);
                                             userBean.setVotes(votesJSON);
 

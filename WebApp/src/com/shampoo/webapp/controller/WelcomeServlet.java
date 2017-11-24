@@ -74,7 +74,7 @@ public class WelcomeServlet extends HttpServlet {
                             request.getSession().setAttribute("userData", userBean);
 
                             int votesJSON = json.getInt("votes");
-                            float ratingJSON = json.getFloat("rating");
+                            float ratingJSON = (float)json.getDouble("rating");
                             userBean.setRating(ratingJSON);
                             userBean.setVotes(votesJSON);
 

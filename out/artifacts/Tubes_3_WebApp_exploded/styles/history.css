@@ -1,0 +1,222 @@
+.container {
+    margin: 0 auto;
+    width: 600px;
+}
+
+.container-wide {
+    margin: 0 auto;
+    width: 700px;
+}
+
+.nav-top {
+    width: 100%;
+}
+
+.logo {
+    float: left;
+}
+
+.projek {
+    margin-bottom: -20px;
+}
+
+.pr, .ojek, .strip {
+    font-size: 30px;
+    margin-bottom: -10px;
+}
+
+.pr, .wush {
+    color: green;
+}
+
+.wush {
+    margin-bottom: 10px;
+}
+
+.ojek {
+    color: red;
+}
+
+.profile-link {
+    float: right;
+    font-size: 20px;
+    margin-top: 15px;
+}
+
+.profile-link > p {
+    margin: 0;
+}
+
+.nav-bot {
+    display: flex;
+    width: 100%;
+}
+
+a.logout {
+    float: right;
+}
+
+.section {
+    width: 33%;
+    border: 1px solid black;
+    padding: 15px;
+    text-align: center;
+    font-size: 25px;
+    font-weight: bold;
+}
+
+.section-name {
+    text-decoration: none;
+    color: black;
+}
+
+.section:hover {
+    background-color: green;
+}
+
+.section:hover > .section-name {
+    color: white;
+}
+
+#section-history {
+    background-color: green;
+}
+
+#section-history > .section-name {
+    color: white;
+}
+
+.history-body {
+    width: 100%;
+}
+
+.history-header {
+    margin-top: 6px;
+    margin-bottom: 15px;
+    font-size: 2em;
+    font-family: "Times new Roman";
+}
+
+.history-nav-bar {
+    width: 100%;
+    display: flex;
+}
+
+.history-nav-section {
+    width: 50%;
+    border: 1px solid black;
+    height: 50px;
+    display: flex;
+    margin-bottom: 40px;
+}
+
+.history-nav-section-active {
+    background: #6ACA6B;
+}
+.history-nav-section a {
+    text-decoration: none;
+    color: black;
+    align-self: center;
+    margin: auto;
+    font-size: 1.3em;
+}
+
+.history-container {
+    margin-left: 30px;
+    display: flex;
+    margin-bottom: 20px;
+}
+
+.history-image {
+    height: 120px;
+    width: 120px;
+    border: 1px solid black;
+}
+
+.history-detail-container {
+    margin-left: 30px;
+    margin-top: 5px;
+    width: 100%;
+}
+
+.hide-button {
+    float: right;
+    height: 35px;
+    width: 85px;
+    text-align: center;
+    background: #D50027;
+    border: 1px solid black;
+    border-radius: 10px;
+    font-size: 1.1em;
+    font-family: "Times new Roman";
+    text-transform: uppercase;
+    cursor: pointer;
+}
+
+.date {
+    color: #999999;
+    width: 300px;
+    margin: 0;
+}
+
+.history-name {
+    margin-top: 0px;
+    margin-bottom: 5px;
+}
+
+.history-location {
+    margin-top: 6px;
+    font-size: 0.8em;
+}
+
+.history-rate {
+    margin-top: 12px;
+    display: flex;
+    font-size: 0.9em;
+}
+
+.history-rate-star {
+    margin-left: 15px;
+    margin-top: -2px;
+    color: #FD9927;
+}
+
+.history-comment-header {
+    font-size: 0.9em;
+    margin-top: 0;
+}
+
+.history-comment-body {
+    margin-left: 15px;
+    font-size: 0.9em;
+}
+
+.driver-history-rate {
+    margin-top: 6px;
+    display: flex;
+    margin-bottom: 6px;
+    font-size: 0.9em;
+}
+
+.driver-history-rate-star {
+    margin-left: 8px;
+    margin-right: 8px;
+    font-size: 1.2em;
+    color: #FD9927;
+}
+
+.driver-history-comment-header {
+    margin-top: 0px;
+    font-size: 0.9em;
+}
+
+.driver-history-comment-body {
+    font-size: 0.9em;
+    margin-left: 12px;
+}
+
+.driver-history-detail-container {
+    margin-left: 30px;
+    margin-top: 5px;
+    width: 100%;
+}

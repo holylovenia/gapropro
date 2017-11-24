@@ -1,0 +1,20 @@
+<component name="ArtifactManager">
+  <artifact type="exploded-war" name="Tubes 3:OOWS exploded">
+    <output-path>$PROJECT_DIR$/out/artifacts/Tubes_3_OOWS_exploded</output-path>
+    <root id="root">
+      <element id="javaee-facet-resources" facet="Tubes 3/web/OOWS" />
+      <element id="directory" name="WEB-INF">
+        <element id="directory" name="classes">
+          <element id="javaee-facet-classes" facet="Tubes 3/web/OOWS" />
+        </element>
+        <element id="directory" name="lib">
+          <element id="library" level="project" name="OOWS" />
+          <element id="library" level="project" name="org.eclipse.ecf:org.apache.httpcomponents.httpclient:4.5.2.v20170210-0925" />
+          <element id="library" level="project" name="org.eclipse.ecf:org.apache.httpcomponents.httpcore:4.4.6.v20170210-0925" />
+          <element id="library" level="project" name="com.liferay.org.apache.commons.fileupload:com.liferay.org.apache.commons.fileupload:6.2.0.1" />
+          <element id="library" level="project" name="org.apache.directory.studio:org.apache.commons.io:2.0.1" />
+        </element>
+      </element>
+    </root>
+  </artifact>
+</component>
