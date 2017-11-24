@@ -152,16 +152,21 @@
                 console.log("Message received. ", payload);
                 var data = JSON.parse(payload.data.notification);
                 if (data.type === "connect" && $rootScope.finding_order) { //Redundant, should be protected by server side
+                    $rootScope.finding_order = false;
                     $rootScope.targetId = data.target;
                     $rootScope.username = data.username;
                     $rootScope.order_found = true;
                     $http.post("http://localhost:3000/availability/set_finding_order", {
                         "userId": $rootScope.myId,
                         "findingOrder": 0
-                    })
+                    });
+                    $scope.$apply();
                 }
                 else if (data.type === "close") {
                     $rootScope.finding_order = false;
+                    $rootScope.order_found = false;
+                    $scope.$apply();
+                    console.log("Asd");
                 }
                 else {
                     $scope.updateMsg();

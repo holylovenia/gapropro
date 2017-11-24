@@ -142,7 +142,11 @@ router.post('/finish_chat', function (req, res) {
                 console.log('Error :', err);
                 return true;
             }
+            console.log("Finish Chat " + body);
         });
+
+        res.set('Content-Type', 'application/json');
+        res.send('{"status":true}');
     });
 });
 

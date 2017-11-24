@@ -1,9 +1,10 @@
 <%@ page import="com.shampoo.webapp.model.OrderBean" %>
 <%@ page import="com.shampoo.webapp.model.DriverBean" %>
+<%@ page import="java.util.Objects" %>
 
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<jsp:useBean id="userData" class="com.shampoo.webapp.model.UserBean" scope="session" />
-<jsp:useBean id="orderData" class="com.shampoo.webapp.model.OrderBean" scope="session" />
+<jsp:useBean id="userData" class="com.shampoo.webapp.model.UserBean" scope="session"/>
+<jsp:useBean id="orderData" class="com.shampoo.webapp.model.OrderBean" scope="session"/>
 <% if (userData.getUserID() == null) response.sendRedirect("login.jsp");%>
 <html>
 <head>
@@ -23,7 +24,7 @@
         </div>
         <div class="profile-link">
             <p>
-                <span>Hi, </span> <% out.print("<b>" + userData.getUsername() + "</b>!");%>
+                <span>Hi, </span> Budi
             </p>
             <p>
                 <a href="handleLogout.jsp" class="logout">Logout</a>
@@ -91,6 +92,7 @@
         <h2 class="complete-order-header">
             HOW WAS IT?
         </h2>
+
         <%
             Integer selectedDriverId = orderData.getDriverId();
             Integer counter = 0;
@@ -114,26 +116,34 @@
                 }
             }
         %>
+
         <div class="complete-order-container">
-            <img src="<% out.print("images/" + selectedDriver.getProfilePicture()); %>" class="complete-order-image" />
-            <p class="complete-order-username"> <% out.print(selectedDriver.getUsername()); %> </p>
-            <p class="complete-order-name"> <% out.print(selectedDriver.getName()); %> </p>
+            <img src="<% out.print("images/" + selectedDriver.getProfilePicture()); %>" class="complete-order-image"/>
+            <p class="complete-order-username"><% out.print(selectedDriver.getUsername()); %></p>
+            <p class="complete-order-name"><% out.print(selectedDriver.getName()); %></p>
 
         </div>
-        <form action="/completeorder" method="post" class="complete-order-comment-rate" ng-controller="finishOrderController">
-            <input type="hidden" name="driverId" value="" />
-            <input type="hidden" name="originCity" value="" />
-            <input type="hidden" name="destinationCity" value="" />
-            <input type="hidden" name="date" value="" />
+        <form action="/completeorder" method="post" class="complete-order-comment-rate" ng-app="finishOrder"
+              ng-controller="finishOrderController">
+            <input type="hidden" name="driverId" value=""/>
+            <input type="hidden" name="originCity" value=""/>
+            <input type="hidden" name="destinationCity" value=""/>
+            <input type="hidden" name="date" value=""/>
             <div class="rating-5-star">
-                <input type="radio" name="rating" id="star-5" value="5" /> <label title="5" class="star-5" for="star-5"></label>
-                <input type="radio" name="rating" id="star-4" value="4" /> <label title="4" class="star-4" for="star-4"></label>
-                <input type="radio" name="rating" id="star-3" value="3" /> <label title="3" class="star-3" for="star-3"></label>
-                <input type="radio" name="rating" id="star-2" value="2" /> <label title="2" class="star-2" for="star-2"></label>
-                <input type="radio" name="rating" id="star-1" value="1" /> <label title="1" class="star-1" for="star-1"></label>
+                <input type="radio" name="rating" id="star-5" value="5"/> <label title="5" class="star-5"
+                                                                                 for="star-5"></label>
+                <input type="radio" name="rating" id="star-4" value="4"/> <label title="4" class="star-4"
+                                                                                 for="star-4"></label>
+                <input type="radio" name="rating" id="star-3" value="3"/> <label title="3" class="star-3"
+                                                                                 for="star-3"></label>
+                <input type="radio" name="rating" id="star-2" value="2"/> <label title="2" class="star-2"
+                                                                                 for="star-2"></label>
+                <input type="radio" name="rating" id="star-1" value="1"/> <label title="1" class="star-1"
+                                                                                 for="star-1"></label>
             </div>
             <textarea class="comment-container" name="comment" placeholder="Your comment..."></textarea>
-            <input class="order-complete-button" type="submit" name="submit" value="complete order" ng-click="finishOrder()" />
+            <input class="order-complete-button" type="submit" name="submit" value="complete order"
+                   ng-click="finishOrder()"/>
         </form>
     </div>
 </div>
@@ -143,46 +153,14 @@
 <script src="https://www.gstatic.com/firebasejs/4.6.2/firebase.js"></script>
 <script src="https://www.gstatic.com/firebasejs/4.6.2/firebase-messaging.js"></script>
 <script>
+    var app = angular.module("finishOrder", []);
+    $rootScope.targetId = <%=orderData.getDriverId()%>;
 
     /**
      * Finish Order Controller
      * Controls finish order (close driver-side chat)
      */
     app.controller("finishOrderController", function ($scope, $http, $rootScope, $window) {
-        $rootScope.myId = <%=userData.getUserID()%>;
-        $rootScope.targetId = <%=orderData.getDriverId()%>;
-        $scope.tokenSet = false;
-
-        $scope.setupFirebase = function () {
-            // Initialize Firebase and get token
-            var config = {
-                apiKey: "AIzaSyCSn3EiT3BZ-GXYq_uxvU-dFxx2C_rrW5I",
-                authDomain: "gapropro-b0e07.firebaseapp.com",
-                databaseURL: "https://gapropro-b0e07.firebaseio.com",
-                projectId: "gapropro-b0e07",
-                storageBucket: "gapropro-b0e07.appspot.com",
-                messagingSenderId: "990522297808"
-            };
-            firebase.initializeApp(config);
-
-            const messaging = firebase.messaging();
-            messaging.requestPermission();
-            messaging.getToken().then(function (currentToken) {
-                if (currentToken) {
-                    $http.post("http://localhost:3000/firebase/set_token", {
-                        "userId": $rootScope.myId,
-                        "firebaseToken": currentToken
-                    });
-                    $scope.tokenSet = true;
-                } else {
-                    console.log('No Instance ID token available. Request permission to generate one.');
-                }
-            });
-            messaging.onMessage(function (payload) {
-                console.log("Message received. ", payload);
-                $scope.updateMsg();
-            });
-        };
 
         $scope.finishOrder = function () {
             $http.post("http://localhost:3000/chat/finish_chat", {
@@ -190,8 +168,6 @@
             })
         };
 
-        // Scripts to run
-        $scope.setupFirebase();
     });
 
 </script>
