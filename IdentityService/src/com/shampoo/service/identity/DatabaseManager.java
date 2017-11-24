@@ -1,6 +1,5 @@
 package com.shampoo.service.identity;
 
-import eu.bitwalker.useragentutils.Browser;
 import eu.bitwalker.useragentutils.UserAgent;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -72,18 +71,19 @@ public class DatabaseManager {
             Timestamp expiredTime = new Timestamp(System.currentTimeMillis() + expiredDelay);
             String access_token = new AccessToken().generateAccessToken(username, email, password) + "#" + userAgent + "#" + ipAddress;
 
-            String query = "INSERT INTO users(username, name, email, password, phone_no, profile_picture, is_driver, expired_time, access_token) VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
+            String query = "INSERT INTO users(username, name, email, password, phone_no, profile_picture, is_driver, expired_time, access_token) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
             PreparedStatement preparedStatement = connection.prepareStatement(query);
             preparedStatement.setString(1, username);
             preparedStatement.setString(2, fullName);
             preparedStatement.setString(3, email);
-            preparedStatement.setString(4, phoneNumber);
-            preparedStatement.setString(5, profilePicture);
-            preparedStatement.setString(6, Integer.toString(isDriver));
-            preparedStatement.setTimestamp(7, expiredTime);
-            preparedStatement.setString(8, access_token);
-            preparedStatement.executeQuery();
+            preparedStatement.setString(4, password);
+            preparedStatement.setString(5, phoneNumber);
+            preparedStatement.setString(6, profilePicture);
+            preparedStatement.setString(7, Integer.toString(isDriver));
+            preparedStatement.setTimestamp(8, expiredTime);
+            preparedStatement.setString(9, access_token);
+            preparedStatement.executeUpdate();
         } catch (SQLException | NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
@@ -288,7 +288,7 @@ public class DatabaseManager {
     }
 
     public Integer fetchUserId(String username) throws SQLException {
-        String query = "SELECT id FROM users WHERE username='" + username + "'";
+        String query = "SELECT id FROM users WHERE username=?";
         PreparedStatement preparedStatement = connection.prepareStatement(query);
         preparedStatement.setString(1, username);
         ResultSet resultSet = preparedStatement.executeQuery();
