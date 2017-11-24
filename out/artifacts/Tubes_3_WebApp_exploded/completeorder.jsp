@@ -154,14 +154,13 @@
 <script src="https://www.gstatic.com/firebasejs/4.6.2/firebase-messaging.js"></script>
 <script>
     var app = angular.module("finishOrder", []);
-    $rootScope.targetId = <%=orderData.getDriverId()%>;
 
     /**
      * Finish Order Controller
      * Controls finish order (close driver-side chat)
      */
     app.controller("finishOrderController", function ($scope, $http, $rootScope, $window) {
-
+        $rootScope.targetId = <%=orderData.getDriverId()%>;
         $scope.finishOrder = function () {
             $http.post("http://localhost:3000/chat/finish_chat", {
                 "receiverId": $rootScope.targetId

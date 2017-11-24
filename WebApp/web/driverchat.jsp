@@ -152,7 +152,6 @@
                 console.log("Message received. ", payload);
                 var data = JSON.parse(payload.data.notification);
                 if (data.type === "connect" && $rootScope.finding_order) { //Redundant, should be protected by server side
-                    $rootScope.finding_order = false;
                     $rootScope.targetId = data.target;
                     $rootScope.username = data.username;
                     $rootScope.order_found = true;
