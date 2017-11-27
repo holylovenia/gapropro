@@ -169,7 +169,7 @@
                 "secondId": $rootScope.targetId
             }).then(function (response) {
                 $scope.message = response.data.result;
-            })
+            });
         };
         /**
          * Sends message to target

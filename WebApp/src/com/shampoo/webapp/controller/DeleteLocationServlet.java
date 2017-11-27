@@ -18,14 +18,17 @@ public class DeleteLocationServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String location = request.getParameter("location");
 
+        System.out.println("DELETE LOCATIOOOONN");
+
         if (location != null) {
-            PreferredLocationClient preferredLocationClient = null;
+            PreferredLocationClient preferredLocationClient;
             try {
                 preferredLocationClient = new PreferredLocationClient();
                 String token_encoded = new CookieHandler().getAccessTokenCookie(request);
                 byte[] token_byte = Base64.getDecoder().decode(token_encoded);
                 String token = new String(token_byte);
                 String result = preferredLocationClient.getPreferredLocation().removePreferredLocation(token, location);
+                System.out.println("REMOVE PREFERRED LOCATION " + result);
                 switch (result) {
                     case "Successful":
                         UserBean userData = (UserBean) request.getSession().getAttribute("userData");

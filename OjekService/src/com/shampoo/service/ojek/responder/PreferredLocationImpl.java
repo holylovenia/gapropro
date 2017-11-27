@@ -15,12 +15,15 @@ public class PreferredLocationImpl implements OjekService, PreferredLocation {
         if(currentUser.getTokenStatus(token).equals(currentUser.VALID)) {
             try {
                 databaseManager.addPreferredLocation(currentUser.getId(), location);
+                System.out.println("Add Preferred Location success");
                 return ACTION_SUCCESS_MESSAGE;
             } catch (SQLException e) {
                 e.printStackTrace();
+                System.out.println("Add Preferred Location error");
                 return currentUser.ACTION_ERROR_MESSAGE;
             }
         } else {
+            System.out.println("Invalid");
             return currentUser.getTokenStatus(token);
         }
     }
@@ -30,9 +33,11 @@ public class PreferredLocationImpl implements OjekService, PreferredLocation {
         if(currentUser.getTokenStatus(token).equals(currentUser.VALID)) {
             try {
                 databaseManager.editPreferredLocation(currentUser.getId(), previouslocation, newLocation);
+                System.out.println("Edit Preferred Location success");
                 return ACTION_SUCCESS_MESSAGE;
             } catch (SQLException e) {
                 e.printStackTrace();
+                System.out.println("Edit Preferred Location error");
                 return currentUser.ACTION_ERROR_MESSAGE;
             }
         } else {
@@ -45,9 +50,11 @@ public class PreferredLocationImpl implements OjekService, PreferredLocation {
         if(currentUser.getTokenStatus(token).equals(currentUser.VALID)) {
             try {
                 databaseManager.removePreferredLocation(currentUser.getId(), location);
+                System.out.println("Remove Preferred Location success");
                 return ACTION_SUCCESS_MESSAGE;
             } catch (SQLException e) {
                 e.printStackTrace();
+                System.out.println("Remove Preferred Location error");
                 return currentUser.ACTION_ERROR_MESSAGE;
             }
         } else {

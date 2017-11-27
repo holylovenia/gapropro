@@ -1,7 +1,9 @@
 <%@ page import="java.util.ArrayList" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<jsp:useBean id="userData" class="com.shampoo.webapp.model.UserBean" scope="session" />
-<% if (userData.getUserID() == null) { response.sendRedirect("login.jsp"); } else {%>
+<jsp:useBean id="userData" class="com.shampoo.webapp.model.UserBean" scope="session"/>
+<% if (userData.getUserID() == null) {
+    response.sendRedirect("login.jsp");
+} else {%>
 <html>
 <head>
     <title>Edit Preferred Location</title>
@@ -25,31 +27,38 @@
                     int count = 1;
                     ArrayList<String> locations = userData.getPreferredLocation();
                     if (locations != null) {
-                    for (int i = 0; i < locations.size(); i++) {
-                        String location = locations.get(i);
+                        for (int i = 0; i < locations.size(); i++) {
+                            String location = locations.get(i);
                 %>
                 <tr>
                     <td class='edit-profile-table-row'><b><% out.print(count); %></b></td>
-                    <td class='edit-profile-table-row' id="edit-profile-row-<% out.print(count); %>"><b> <% out.print(location); %> </b></td>
+                    <td class='edit-profile-table-row' id="edit-profile-row-<% out.print(count); %>"><b><%
+                        out.print(location); %></b></td>
                     <td class='edit-profile-table-row'>
 
                         <form action='/editlocation' method='post'>
-                            <img src='img/pencil.svg' class='edit-profile-icon-edit' id="edit-profile-icon-edit-<% out.print(count); %>" onclick=updateLocation(<% out.print(count); %>)>
-                            <input type='hidden' name='location1' id="location1-<% out.print(count); %>" value='<% out.print(location); %>'>
+                            <img src='img/pencil.svg' class='edit-profile-icon-edit'
+                                 id="edit-profile-icon-edit-<% out.print(count); %>"
+                                 onclick=updateLocation(<% out.print(count); %>)>
+                            <input type='hidden' name='location1' id="location1-<% out.print(count); %>"
+                                   value='<% out.print(location); %>'>
                             <input type='hidden' name='location2' id="location2-<% out.print(count); %>" value=''>
-                            <button type='submit' class='edit-location-button' id='edit-location-button-update-<% out.print(count); %>'> </button>
+                            <button type='submit' class='edit-location-button'
+                                    id='edit-location-button-update-<% out.print(count); %>'></button>
                         </form>
 
                         <form action='/deletelocation' method='post'>
-                            <img src='img/cross.svg' class='edit-profile-icon-delete' onclick=deleteLocation(<% out.print(count); %>)>
+                            <img src='img/cross.svg' class='edit-profile-icon-delete'
+                                 onclick=removeLocation(<% out.print(count); %>)>
                             <input type='hidden' name='location' value='<% out.print(location); %>'>
-                            <button type='submit' class='edit-location-button' id='edit-location-button-delete-<% out.print(count); %>'></button>
+                            <button type='submit' class='edit-location-button'
+                                    id='edit-location-button-delete-<% out.print(count); %>'></button>
                         </form>
                     </td>
                 </tr>
                 <%
-                    count++;
-                    }
+                            count++;
+                        }
                     }
                 %>
             </table>
@@ -60,7 +69,8 @@
             <b>ADD NEW LOCATION:</b>
         </div>
         <div>
-            <form action='/addlocation' method='POST' onsubmit='return validateEmpty("edit-profile-preferedlocation-input","dummy","edit-profile-submit")'>
+            <form action='/addlocation' method='POST'
+                  onsubmit='return validateEmpty("edit-profile-preferedlocation-input","dummy","edit-profile-submit")'>
                 <input type='text' name='location' class='edit-profile-input' id='edit-profile-preferedlocation-input'>
                 <input type='submit' value='ADD' class='edit-profile-submit' id='edit-profile-submit'>
             </form>
