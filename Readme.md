@@ -6,9 +6,9 @@ Melakukan upgrade Website ojek online sederhana pada Tugas 2 dengan mengaplikasi
 
 ## Anggota Tim
 
-- Rionaldi Chandraseta / 13515077
-- Vincent Hendryanto Halim / 13515089
-- Holy Lovenia / 13515113
+- [Rionaldi Chandraseta](https://github.com/rionaldichandraseta)
+- [Vincent Hendryanto Halim](https://github.com/vincenthend)
+- [Holy Lovenia](https://github.com/holylovenia)
 
 ## Penjelasan Mengenai Tugas
 
